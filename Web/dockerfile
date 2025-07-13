@@ -1,0 +1,12 @@
+FROM archlinux:multilib-devel-20250706.0.377547
+
+RUN pacman -Syu --noconfirm && pacman -S python-pip --noconfirm && pacman -Scc --noconfirm
+
+WORKDIR /app
+
+COPY . /app
+
+RUN pip install --break-system-packages --no-cache-dir -r requirements.txt
+
+CMD ["python", "src/main.py"]
+
