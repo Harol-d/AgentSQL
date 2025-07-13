@@ -1,1 +1,0 @@
-# AgentSQL - Cámara y Comercio
