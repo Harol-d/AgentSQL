@@ -1,4 +1,4 @@
-from ..config.Factory import getLlm
+from Factory import getLlm
 from langchain_core.messages import HumanMessage
 
 
@@ -8,5 +8,5 @@ class ModeLlm:
 
     def sendPrompt(self, prompt: str):
         message = HumanMessage(prompt)
-        responser = self.model.invoke([message])
-        return responser.content
+        response = self.model.invoke([message])
+        return response.content

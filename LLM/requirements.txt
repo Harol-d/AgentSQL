@@ -1,6 +1,7 @@
 #LMM
 langchain_core
 langchain-google-genai
+langchain_openai
 #Api
 flask
 python-dotenv

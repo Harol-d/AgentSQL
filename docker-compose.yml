@@ -7,6 +7,6 @@ services:
       - llm
 
   llm:
-    build: ./LLM/
+    build: ./LLM/ 
     ports:
-      - 4000:400
+      - 4000:4000
