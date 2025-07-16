@@ -1,4 +1,5 @@
 .venv
 .vscode
-.idx
 __pycache__
+LLM/venv
+/LLM/.env
