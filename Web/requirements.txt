@@ -1,5 +1,2 @@
-#App
-langchain_core
-langchain-google-genai
 # App
 flask

@@ -1,0 +1,6 @@
+#LMM
+langchain_core
+langchain-google-genai
+#Api
+flask
+python-dotenv

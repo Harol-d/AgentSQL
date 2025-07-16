@@ -3,6 +3,10 @@ services:
     build: ./Web/
     ports:
       - 3000:3000
-  LLM:
-    image: langchain/langchain:latest
-# network_mode: host
+    depends_on:
+      - llm
+
+  llm:
+    build: ./LLM/
+    ports:
+      - 4000:400
