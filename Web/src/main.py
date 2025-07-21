@@ -1,11 +1,11 @@
 from flask import Flask, jsonify, render_template, request
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import requests
-# import os
-# load_dotenv("..../.env")
+import os
+load_dotenv("../../.env")
 
 
-# url = os.getenv("APP_URL")
+urlBase = os.getenv("APP_URL")
 app = Flask(__name__, template_folder='../templates')
 
 @app.route("/")
@@ -20,7 +20,7 @@ def procesar():
             # Datos de formulario HTML (como Laravel)
             prompt = request.form.get('Prompt')
 
-        response = requests.post("http://localhost:4000/response", json=[{"Prompt": prompt}])
+        response = requests.post(f"{urlBase}/response", json=[{"Prompt": prompt}])
         response_data = response.json()
 
         return jsonify(response_data), 200
