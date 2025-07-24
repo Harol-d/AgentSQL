@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgentSQL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-white min-h-screen">
+    <!-- Menú hamburguesa -->
+    <div class="fixed top-4 right-4 z-50">
+      <button id="menuButton" class="bg-red-600 hover:bg-red-700 text-white p-3 rounded-lg shadow-lg transition duration-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Menú desplegable -->
+    <div id="menu" class="fixed top-0 right-0 h-full w-64 bg-white border-l-2 border-red-600 shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-40">
+      <div class="p-4">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-red-600">Menú</h2>
+          <button id="closeButton" class="text-red-600 hover:text-red-800">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <nav class="space-y-4">
+          <a href="#" class="block text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition duration-200">Inicio</a>
+          <a href="#" class="block text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition duration-200">Configuración</a>
+          <a href="#" class="block text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition duration-200">Ayuda</a>
+          <a href="#" class="block text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition duration-200">Acerca de</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Overlay para cerrar el menú -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-4xl font-bold text-red-600 text-center mb-8">AgentSQL</h1>
+      <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg border-2 border-red-600 p-6">
+        <form method="POST" action="/api-chat" class="space-y-4">
+          <div class="flex space-x-2">
+            <input 
+              type="text" 
+              name="Prompt" 
+              placeholder="Escribe tu prompt aquí" 
+              autocomplete="off" 
+              required
+              class="flex-1 px-4 py-3 border-2 border-red-600 rounded-lg focus:outline-none focus:border-red-800 focus:ring-2 focus:ring-red-200 text-gray-800 placeholder-gray-500"
+            >
+            <!-- Botón para subir archivos -->
+            <button 
+              type="button"
+              id="uploadButton"
+              class="bg-red-600 hover:bg-red-700 text-white p-3 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              title="Subir archivo"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+            </button>
+            <!-- Botón de enviar con icono -->
+            <button 
+              type="submit"
+              class="bg-red-600 hover:bg-red-700 text-white p-3 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              title="Enviar mensaje"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+            </button>
+          </div>
+          <!-- Input file oculto -->
+          <input 
+            type="file" 
+            id="fileInput" 
+            class="hidden" 
+            accept=".txt,.pdf,.doc,.docx,.csv,.json"
+            multiple
+          >
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Variables del menú
+      const menuButton = document.getElementById('menuButton');
+      const menu = document.getElementById('menu');
+      const closeButton = document.getElementById('closeButton');
+      const overlay = document.getElementById('overlay');
+
+      // Función para abrir el menú
+      function openMenu() {
+        menu.classList.remove('translate-x-full');
+        overlay.classList.remove('hidden');
+        menuButton.classList.add('hidden'); // Ocultar el botón hamburguesa
+      }
+
+      // Función para cerrar el menú
+      function closeMenu() {
+        menu.classList.add('translate-x-full');
+        overlay.classList.add('hidden');
+        menuButton.classList.remove('hidden'); // Mostrar el botón hamburguesa
+      }
+
+      // Event listeners
+      menuButton.addEventListener('click', openMenu);
+      closeButton.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', closeMenu);
+
+      // Event listener para el botón de subir archivos
+      const uploadButton = document.getElementById('uploadButton');
+      const fileInput = document.getElementById('fileInput');
+      
+      uploadButton.addEventListener('click', function() {
+        fileInput.click();
+      });
+
+      // Event listener para cuando se seleccionen archivos
+      fileInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+          console.log('Archivos seleccionados:', files);
+          // Aquí puedes agregar la lógica para manejar los archivos
+          // Por ejemplo, mostrar los nombres de los archivos seleccionados
+          alert(`Archivos seleccionados: ${Array.from(files).map(f => f.name).join(', ')}`);
+        }
+      });
+
+      // Cerrar con tecla Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeMenu();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,25 +1,8 @@
-from flask import Flask, jsonify, request
-from LmmController import lmmController
+from flask import Flask
+from Routes import api
 
 app = Flask(__name__)
-controller = lmmController()
-
-
-@app.route("/response", methods=["POST"])
-def index():
-    prompt = request.get_json()
-    response = controller.inputValidate(prompt)
-    return jsonify({
-        "response": response
-    })
-
-
-@app.route("/")
-def welcome():
-    return jsonify({
-        "puerto4000": "estas consumiendo la api"
-    })
-
+app.register_blueprint(api)
 
 def main():
     app.run(host="0.0.0.0", port=4000)

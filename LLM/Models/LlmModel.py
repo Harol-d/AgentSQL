@@ -1,6 +1,6 @@
-from Factory import factoryLlm
+from .ModelFactory import factoryLlm
 from langchain_core.messages import HumanMessage
-from settings import SettingsModel
+from Config.settings import SettingsModel
 
 
 class ModeLlm (SettingsModel):
