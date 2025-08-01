@@ -10,7 +10,7 @@ def index():
     prompt = request.get_json()
     response = controller.promtValidate(prompt)
     return jsonify({
-        "response": response
+        "LLM": response
     })
 
 

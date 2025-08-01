@@ -2,14 +2,9 @@ from dataclasses import dataclass
 from typing import Optional
 from dotenv import load_dotenv
 import os
-#  de tu salida se espera que" \
-#     "sea des el impacto del codigo que se va a ejecutar, las tablas afectadas y una evalaucion de la" \
-#     "estructura del codigo de entrada, 
-# si el codigo" 
-#     "de entrada presenta errores, entrega la version corregida. Por ultimo y no menos importante, " \
-#     "quiero que si haces un correccion al codigo me des el codigo ordenado como si estuviera ejecutando una Sentencia SQL
+
 load_dotenv('../.env')
-#que esten fuera del modelo de entidad relacion facilitado
+
 @dataclass
 class SettingsModel:
     LLM_PROVEEDOR: Optional[str] = os.getenv("LLM_PROVEEDOR")
