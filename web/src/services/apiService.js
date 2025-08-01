@@ -4,24 +4,36 @@ import { URL_BASE } from './apiConfig';
 class ApiService {
   
   // Método para enviar consultas SQL al backend
-  async enviarConsulta(query) {
+  async enviarPrompt(prompt) {
     try {
-      const response = await fetch(`${URL_BASE}/api/query`, {
+      const response = await fetch(`${URL_BASE}/response`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ prompt })
       });
       
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
       
-      return await response.json();
+      const data = await response.json();
+      
+      // Extraer la respuesta del LLM del formato: {"LLM": "respuesta"}
+      const llmResponse = data.LLM || data.llm || '';
+      
+      return {
+        success: true,
+        content: llmResponse,
+        originalData: data
+      };
     } catch (error) {
-      console.error('Error enviando consulta:', error);
-      throw error;
+      return {
+        success: false,
+        error: error.message,
+        content: 'Error al conectar con el servidor'
+      };
     }
   }
 
@@ -36,9 +48,18 @@ class ApiService {
       
       return await response.json();
     } catch (error) {
-      console.error('Error obteniendo historial:', error);
       throw error;
     }
+  }
+
+  // Alias para mantener compatibilidad
+  async sendQuery(query) {
+    return this.enviarPrompt(query);
+  }
+
+  // Alias para mantener compatibilidad
+  async getHistory() {
+    return this.obtenerHistorial();
   }
 }
 

@@ -6,3 +6,4 @@ export { default as ChatContainer } from './ChatContainer';
 export { default as ChatBubble } from './ChatBubble';
 export { default as Modal } from './Modal';
 export { default as Footer } from './Footer';
+export { default as TypingAnimation } from './TypingAnimation';

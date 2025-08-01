@@ -40,18 +40,29 @@ function App() {
   };
 
   const openModal = (msg) => {
-    setModalMessage(msg);
-    setModalOpen(true);
+    if (msg && msg.content) {
+      setModalMessage(msg);
+      setModalOpen(true);
+    }
   };
+
   const closeModal = () => {
     setModalOpen(false);
     setModalMessage(null);
   };
-  const handleCopy = () => {
-    if (modalMessage) {
-      const codeMatch = modalMessage.content.match(/```sql([\s\S]*?)```/);
-      const code = codeMatch ? codeMatch[1].trim() : modalMessage.content;
-      navigator.clipboard.writeText(code);
+
+  const handleCopy = (code) => {
+    try {
+      if (code) {
+        navigator.clipboard.writeText(code);
+      } else if (modalMessage && modalMessage.content) {
+        // Fallback para extraer código del mensaje completo
+        const codeMatch = modalMessage.content.match(/```sql([\s\S]*?)```/);
+        const extractedCode = codeMatch ? codeMatch[1].trim() : modalMessage.content;
+        navigator.clipboard.writeText(extractedCode);
+      }
+    } catch (error) {
+      // Error silenciado
     }
   };
 
@@ -117,7 +128,7 @@ function App() {
         />
       </main>
       
-      <Footer />
+      <Footer onSendQuery={sendQuery} />
     </div>
   );
 }

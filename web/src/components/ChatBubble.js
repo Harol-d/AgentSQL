@@ -1,14 +1,67 @@
 import React from 'react';
+import TypingAnimation from './TypingAnimation';
 
 const ChatBubble = ({ message, onOpenModal }) => {
-  const { id, type, content, time } = message;
+  const { id, type, content, time, isLoading, isTyping } = message;
+
+  // Componente de loading para mensajes del sistema
+  const LoadingDots = () => (
+    <div className="loading-dots">
+      <span className="dot"></span>
+      <span className="dot"></span>
+      <span className="dot"></span>
+    </div>
+  );
+
+  // Función para renderizar contenido con formato SQL
+  const renderContent = (content, isTyping = false) => {
+    if (content && content.split('```sql').length > 1) {
+      const parts = content.split('```sql');
+      const beforeSQL = parts[0];
+      const sqlPart = parts[1].replace('```', '').trim();
+      
+      return (
+        <>
+          {beforeSQL.split('\n').map((line, i) => <div key={i}>{line}</div>)}
+          <pre className="sql-block">{sqlPart}</pre>
+        </>
+      );
+    }
+    
+    if (isTyping && content) {
+      return <TypingAnimation fullText={content} typingSpeed={30} />;
+    }
+    
+    return content || '';
+  };
+
+  // Función para manejar el click del modal
+  const handleModalClick = () => {
+    // Solo permitir abrir modal si:
+    // 1. Es mensaje del sistema
+    // 2. No está cargando
+    // 3. No está escribiendo
+    // 4. Tiene contenido
+    // 5. Contiene SQL
+    if (type === 'system' && !isLoading && !isTyping && content && content.includes('```sql')) {
+      onOpenModal(message);
+    }
+  };
 
   return (
     <div
       key={id}
-      className={`chat-bubble ${type}`}
-      onClick={type === 'system' ? () => onOpenModal(message) : undefined}
-      style={type === 'system' ? { cursor: 'pointer' } : {}}
+      className={`chat-bubble ${type} ${isLoading ? 'loading' : ''} ${isTyping ? 'typing' : ''}`}
+      onClick={handleModalClick}
+      style={
+        type === 'system' && 
+        !isLoading && 
+        !isTyping && 
+        content && 
+        content.includes('```sql') 
+          ? { cursor: 'pointer' } 
+          : {}
+      }
     >
       {type === 'user' ? (
         <div className="bubble-user">
@@ -19,20 +72,16 @@ const ChatBubble = ({ message, onOpenModal }) => {
         <div className="bubble-system">
           <div className="bubble-header">
             <i className="fas fa-database"></i>
+            {isLoading && <span className="loading-text">Procesando...</span>}
           </div>
           <div className="bubble-content">
-            {content.split('```sql').length > 1 ? (
-              <>
-                {content.split('```sql')[0].split('\n').map((line, i) => <div key={i}>{line}</div>)}
-                <pre className="sql-block">
-                  {content.split('```sql')[1].replace('```','').trim()}
-                </pre>
-              </>
+            {isLoading ? (
+              <LoadingDots />
             ) : (
-              content
+              renderContent(content, isTyping)
             )}
           </div>
-          <div className="bubble-time">{time}</div>
+          {!isLoading && <div className="bubble-time">{time}</div>}
         </div>
       )}
     </div>
