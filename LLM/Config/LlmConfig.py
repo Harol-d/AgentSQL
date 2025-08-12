@@ -6,10 +6,11 @@ import os
 load_dotenv('../.env')
 
 @dataclass
-class SettingsModel:
+class SettingsLlm:
     LLM_PROVEEDOR: Optional[str] = os.getenv("LLM_PROVEEDOR")
     LLM_MODEL: Optional[str] = os.getenv("LLM_MODEL")
-    API_KEY: Optional[str] = os.getenv("API_KEY")
+    API_KEY: Optional[str] = os.getenv("API_KEY") 
+    API_KEY_PINECONE: Optional[str] = os.getenv("API_KEY_PINECONE")
     modelRole: str = "Eres un revisor de nivel senior especializado únicamente " \
     "en " \
             "código SQL. No puedes responder a ningún otro tema que no sea SQL o bases " \
