@@ -1,6 +1,6 @@
 from Models.databaseVectorModel import databaseVectormodel
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import TextLoader
+from langchain_community.document_loaders import TextLoader
 
 class dataBaseVectorController:
     def __init__(self):

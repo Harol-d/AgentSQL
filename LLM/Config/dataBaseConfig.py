@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional
 from dotenv import load_dotenv
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 import os
 
 load_dotenv('../.env')
 
 @dataclass
 class PineconeConfig:
-    API_KEY_PINECONE: Optional[str] = os.getenv("API_KEY_PINECONE")
+    PINECONE_API_KEY: Optional[str] = os.getenv("PINECONE_API_KEY")
     Modelo = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
     
     

@@ -1,10 +1,11 @@
 from Models.LlmModel import ModeLlm
 from Controllers.dataBaseVectorController import dataBaseVectorController
 
-class lmmController(ModeLlm):
+class lmmController:
     def __init__(self):
+        self.model = ModeLlm()
         self.database = dataBaseVectorController()
-    def promtValidate(self, data: dict):
+    def promptValidate(self, data: dict):
             try:
                 prompt = data.get("prompt")
                 
@@ -24,5 +25,5 @@ class lmmController(ModeLlm):
             
             # response = ModeLlm.sendPrompt(self, prompt)
             context = self.database.obtenerRecords(prompt)
-            response = ModeLlm.sendPrompt(self, prompt, context)
+            response = self.model.sendPrompt(prompt, context)
             return response

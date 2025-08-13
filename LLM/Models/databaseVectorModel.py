@@ -5,9 +5,9 @@ from Config.dataBaseConfig import PineconeConfig
 
 class databaseVectormodel (PineconeConfig):
     def __init__(self):
-        self.pipecone = Pinecone(api_key=self.API_KEY_PINECONE)
+        self.pipecone = Pinecone(api_key=self.PINECONE_API_KEY)
         self.record = "taller"
-        self.index = self.pipecone.Index(self.record)
+        # self.index = self.pipecone.Index(self.record)
 
     def agregarRecords(self, chunks: str):
         resultado = PineconeVectorStore.from_documents(
@@ -20,12 +20,12 @@ class databaseVectormodel (PineconeConfig):
         self.pipecone.delete(delete_all=True)
     
     def consultarRecords(self, pregunta: str):
-        vstore = PineconeVectorStore.from_existing_index(index_name=self.record, embedding=self.Modelo, pinecone_api_key=self.API_KEY_PINECONE )
+        vstore = PineconeVectorStore.from_existing_index(index_name=self.record, embedding=self.Modelo)
         context = vstore.similarity_search(pregunta, 5)
         return context 
     
     def imprimirVariableDeEntorno(self):
-        return self.API_KEY_PINECONE
+        return self.PINECONE_API_KEY
 
 # cargar el documento SQL
 
