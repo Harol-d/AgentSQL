@@ -7,14 +7,7 @@ from Models.databaseVectorModel import databaseVectormodel
 api = Blueprint('api', __name__)
 llmresponse = lmmController()
 dbModel  = databaseVectormodel()
-# @api.route("/Var")  
-# def imprimirVar():
-#     responsedbmodel = dbModel.imprimirVariableDeEntorno()
-#     # responsemodel = llmresponse.imprimirVariables()
-#     # return jsonify({
-#     #     "API_KEY_PINECONE": responsedbmodel,
-#     #     "LLM": responsemodel
-#     # })
+
 
 
 @api.route("/response", methods=["POST"])

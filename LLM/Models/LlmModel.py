@@ -2,7 +2,7 @@
 from Config.LlmConfig import SettingsLlm
 from Models.ModelFactory import factoryLlm
 # from langchain.chains.question_answering import load_qa_chain # Obsoleto
-from langchain_core.documents import Document
+#from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 

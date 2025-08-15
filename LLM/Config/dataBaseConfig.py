@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional
-from dotenv import load_dotenv
 from langchain_huggingface import HuggingFaceEmbeddings
 import os
 
-load_dotenv('../.env')
+
 
 @dataclass
 class PineconeConfig:
