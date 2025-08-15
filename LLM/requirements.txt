@@ -4,14 +4,19 @@ langchain-community
 langchain-google-genai
 langchain_openai
 langchain_text_splitters
+#langchain_core.prompts
+langchain_pinecone
+langchain_huggingface
+#langchain.chains.combine_documents
+
 #Api
 flask
 #env
-python-dotenv
+# python-dotenv
 requests
 flask-cors
 #embeding
-numpy
+#numpy
 sentence-transformers
 #database Vector
 pinecone
