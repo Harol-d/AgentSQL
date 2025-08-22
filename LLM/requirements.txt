@@ -1,22 +1,16 @@
-#LMM
+# LLM - sin versiones específicas para evitar conflictos
 langchain
 langchain-community
 langchain-google-genai
-langchain_openai
-langchain_text_splitters
-#langchain_core.prompts
-langchain_pinecone
-langchain_huggingface
-#langchain.chains.combine_documents
+langchain-text-splitters
+langchain-pinecone
+langchain-huggingface
 
-#Api
+# API
 flask
-#env
-# python-dotenv
 requests
 flask-cors
-#embeding
-#numpy
+# Embedding
 sentence-transformers
-#database Vector
+# Database Vector
 pinecone
