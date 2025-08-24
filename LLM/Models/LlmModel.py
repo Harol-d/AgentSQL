@@ -20,8 +20,8 @@ class ModeLlm (SettingsLlm):
         # 1. Define la plantilla del prompt para instruir al modelo sobre cómo usar el contexto.
         prompt_template = ChatPromptTemplate.from_template(
             self.modelRole + "\n\n" +
-            "Debes de responder guiandote unicamente en el siguiente contexto: {context}\n\n" +
-            "Pregunta del Usuario: {input}"
+            "You must respond guided only by the following context: {context}\n\n" +
+            "User Question: {input}"
         )
         document_chain = create_stuff_documents_chain(self.model, prompt_template)
         response = document_chain.invoke({

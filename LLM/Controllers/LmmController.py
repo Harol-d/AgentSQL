@@ -27,3 +27,4 @@ class lmmController:
             context = self.database.obtenerRecords(prompt)
             response = self.model.sendPrompt(prompt, context)
             return response
+            
