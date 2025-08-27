@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './styles/App.css';
 
 // Importación de componentes (capa de diseño y vistas)
@@ -28,38 +28,30 @@ function App() {
   const historyButtonRef = useRef(null);
 
   // Hooks para la lógica de negocio
-  const { messages, addMessage, sendQuery, loadMessagesFromConversation } = useMessages();
-  const { 
-    history, 
-    currentConversationId, 
-    loadHistory, 
-    createNewConversation, 
-    deleteConversation, 
-    updateConversation, 
-    selectConversation 
-  } = useHistory();
+  const { messages, addMessage, sendQuery } = useMessages();
+  const { history, loadHistory } = useHistory();
 
-  const toggleMenu = useCallback(() => {
-    setMenuOpen(prev => !prev);
-  }, []);
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
-  const toggleHistory = useCallback(() => {
-    setHistoryOpen(prev => !prev);
-  }, []);
+  const toggleHistory = () => {
+    setHistoryOpen(!historyOpen);
+  };
 
-  const openModal = useCallback((msg) => {
+  const openModal = (msg) => {
     if (msg && msg.content) {
       setModalMessage(msg);
       setModalOpen(true);
     }
-  }, []);
+  };
 
-  const closeModal = useCallback(() => {
+  const closeModal = () => {
     setModalOpen(false);
     setModalMessage(null);
-  }, []);
+  };
 
-  const handleCopy = useCallback((code) => {
+  const handleCopy = (code) => {
     try {
       if (code) {
         navigator.clipboard.writeText(code);
@@ -72,43 +64,7 @@ function App() {
     } catch (error) {
       // Error silenciado
     }
-  }, [modalMessage]);
-
-  // Cargar historial al iniciar
-  useEffect(() => {
-    loadHistory();
-  }, [loadHistory]);
-
-  // Actualizar conversación actual cuando cambien los mensajes
-  // Usamos useRef para evitar actualizaciones excesivas
-  const messagesRef = useRef();
-  messagesRef.current = messages;
-  
-  useEffect(() => {
-    if (currentConversationId && messages.length > 0) {
-      // Usar setTimeout para debounce y evitar actualizaciones excesivas
-      const timeoutId = setTimeout(() => {
-        updateConversation(currentConversationId, messagesRef.current);
-      }, 300); // 300ms de debounce
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [currentConversationId, messages.length]); // ❌ Removida updateConversation de dependencias
-
-  // Manejar creación de nueva conversación
-  const handleCreateNewConversation = useCallback(() => {
-    createNewConversation();
-    loadMessagesFromConversation({ messages: [] }); // Limpiar mensajes actuales
-  }, [createNewConversation, loadMessagesFromConversation]);
-
-  // Manejar selección de conversación
-  const handleSelectConversation = useCallback((conversationId) => {
-    const conversation = history.find(conv => conv.id === conversationId);
-    if (conversation) {
-      selectConversation(conversationId);
-      loadMessagesFromConversation(conversation);
-    }
-  }, [history, selectConversation, loadMessagesFromConversation]);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -150,10 +106,6 @@ function App() {
         onToggle={toggleHistory}
         historyRef={historyRef}
         history={history}
-        currentConversationId={currentConversationId}
-        onCreateNew={handleCreateNewConversation}
-        onDeleteConversation={deleteConversation}
-        onSelectConversation={handleSelectConversation}
       />
       
       <MenuSidebar 

@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
+import React from 'react';
 import TypingAnimation from './TypingAnimation';
 
-const ChatBubble = memo(({ message, onOpenModal }) => {
+const ChatBubble = ({ message, onOpenModal }) => {
   const { id, type, content, time, isLoading, isTyping } = message;
 
   // Componente de loading para mensajes del sistema
@@ -15,9 +15,7 @@ const ChatBubble = memo(({ message, onOpenModal }) => {
 
   // Función para renderizar contenido con formato SQL
   const renderContent = (content, isTyping = false) => {
-    if (!content) return '';
-    
-    if (content.split('```sql').length > 1) {
+    if (content && content.split('```sql').length > 1) {
       const parts = content.split('```sql');
       const beforeSQL = parts[0];
       const sqlPart = parts[1].replace('```', '').trim();
@@ -30,14 +28,11 @@ const ChatBubble = memo(({ message, onOpenModal }) => {
       );
     }
     
-    // Solo mostrar animación de escritura para mensajes nuevos que están marcados como typing
-    // y que no son históricos
-    if (isTyping && !message.isHistorical) {
-      return <TypingAnimation fullText={content} typingSpeed={8} />;
+    if (isTyping && content) {
+      return <TypingAnimation fullText={content} typingSpeed={30} />;
     }
     
-    // Para mensajes históricos o completados, mostrar el contenido directamente
-    return content;
+    return content || '';
   };
 
   // Función para manejar el click del modal
@@ -91,23 +86,6 @@ const ChatBubble = memo(({ message, onOpenModal }) => {
       )}
     </div>
   );
-}, (prevProps, nextProps) => {
-  // Comparación personalizada para evitar re-renders innecesarios
-  const prevMessage = prevProps.message;
-  const nextMessage = nextProps.message;
-  
-  return (
-    prevMessage.id === nextMessage.id &&
-    prevMessage.type === nextMessage.type &&
-    prevMessage.content === nextMessage.content &&
-    prevMessage.time === nextMessage.time &&
-    prevMessage.isLoading === nextMessage.isLoading &&
-    prevMessage.isTyping === nextMessage.isTyping &&
-    prevMessage.isHistorical === nextMessage.isHistorical &&
-    prevProps.onOpenModal === nextProps.onOpenModal
-  );
-});
-
-ChatBubble.displayName = 'ChatBubble';
+};
 
 export default ChatBubble;
