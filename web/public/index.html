@@ -1,27 +1,461 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente SQL - Chat DB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <title>AgentSQL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-   
-  </body>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f7f7f8;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .welcome-message {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .welcome-message h2 {
+            color: #dc2626;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .welcome-message p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .example-card {
+            background: #f3f4f6;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-card:hover {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .example-card h3 {
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .example-card p {
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: #dc2626;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #dc2626;
+            color: white;
+        }
+
+        .message.assistant .message-avatar {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .input-container {
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            padding: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: end;
+            margin-top: 1rem;
+        }
+
+        .input-container:focus-within {
+            border-color: #dc2626;
+        }
+
+        .message-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-height: 120px;
+            min-height: 24px;
+        }
+
+        .send-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #b91c1c;
+        }
+
+        .send-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .status-dot.offline {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .chat-container {
+                padding: 0.5rem;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .examples {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>🗃️</span>
+            Asistente SQL
+        </h1>
+        <div class="subtitle">Consulta tus bases de datos con lenguaje natural</div>
+    </div>
+
+    <div class="chat-container">
+        <div class="welcome-message">
+            <h2>¡Bienvenido al Asistente SQL!</h2>
+            <p>Haz preguntas sobre tus bases de datos en lenguaje natural. El asistente generará las consultas SQL necesarias y te mostrará los resultados.</p>
+            
+            <div class="examples">
+                <div class="example-card" onclick="sendExample('Muéstrame todos los usuarios registrados')">
+                    <h3>👥 Consultar Usuarios</h3>
+                    <p>Muéstrame todos los usuarios registrados</p>
+                </div>
+                <div class="example-card" onclick="sendExample('¿Cuáles fueron las ventas del último mes?')">
+                    <h3>💰 Análisis de Ventas</h3>
+                    <p>¿Cuáles fueron las ventas del último mes?</p>
+                </div>
+                <div class="example-card" onclick="sendExample('Revisa el estado del inventario')">
+                    <h3>📦 Control de Inventario</h3>
+                    <p>Revisa el estado del inventario</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="messages-container" id="messages">
+            <!-- Los mensajes aparecerán aquí -->
+        </div>
+
+        <div class="input-container">
+            <textarea 
+                id="messageInput" 
+                class="message-input" 
+                placeholder="Escribe tu consulta aquí... (ej: 'Muéstrame los usuarios activos')"
+                rows="1"
+            ></textarea>
+            <button id="sendButton" class="send-button" onclick="sendMessage()">
+                Enviar
+            </button>
+        </div>
+    </div>
+
+    <div class="status-indicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Conectando...</span>
+    </div>
+
+    <script>
+        let isLoading = false;
+        let conversationId = 'conv_' + Date.now();
+
+        // Elementos del DOM
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Send message on Enter
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Función para enviar mensaje
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || isLoading) return;
+
+            // Limpiar input
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Agregar mensaje del usuario
+            addMessage('user', message);
+
+            // Mostrar loading
+            setLoading(true);
+            const loadingMessage = addMessage('assistant', '<div class="loading">Procesando consulta SQL</div>');
+
+            try {
+                const response = await fetch('/api/ask/SQL-Agent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: message,
+                        conversationId: conversationId,
+                        parentMessageId: Date.now().toString()
+                    })
+                });
+
+                const data = await response.json();
+
+                // Remover mensaje de loading
+                loadingMessage.remove();
+
+                if (response.ok) {
+                    addMessage('assistant', data.content);
+                } else {
+                    addMessage('assistant', data.content || 'Error al procesar la consulta');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                loadingMessage.remove();
+                addMessage('assistant', '❌ Error de conexión. Verifica que el servidor SQL Agent esté ejecutándose.');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Función para enviar ejemplo
+        function sendExample(text) {
+            messageInput.value = text;
+            messageInput.focus();
+            sendMessage();
+        }
+
+        // Función para agregar mensaje
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = role === 'user' ? 'U' : '🗃️';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            return messageDiv;
+        }
+
+        // Función para manejar estado de loading
+        function setLoading(loading) {
+            isLoading = loading;
+            sendButton.disabled = loading;
+            sendButton.textContent = loading ? 'Enviando...' : 'Enviar';
+        }
+
+        // Verificar estado del servidor
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('/api/health');
+                if (response.ok) {
+                    statusDot.classList.remove('offline');
+                    statusText.textContent = 'Conectado';
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (error) {
+                statusDot.classList.add('offline');
+                statusText.textContent = 'Sin conexión';
+            }
+        }
+
+        // Verificar estado cada 10 segundos
+        setInterval(checkServerStatus, 10000);
+        checkServerStatus();
+
+        // Focus inicial
+        messageInput.focus();
+    </script>
+</body>
 </html>
