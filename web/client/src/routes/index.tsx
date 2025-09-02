@@ -8,16 +8,11 @@ import {
   TwoFactorScreen,
   RequestPasswordReset,
 } from '~/components/Auth';
-import AgentMarketplace from '~/components/Agents/Marketplace';
-import { OAuthSuccess, OAuthError } from '~/components/OAuth';
 import { AuthContextProvider } from '~/hooks/AuthContext';
 import RouteErrorBoundary from './RouteErrorBoundary';
 import StartupLayout from './Layouts/Startup';
 import LoginLayout from './Layouts/Login';
-import dashboardRoutes from './Dashboard';
-import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
-import Search from './Search';
 import Root from './Root';
 
 const AuthLayout = () => (
@@ -32,25 +27,6 @@ const baseHref = baseEl?.getAttribute('href') || '/';
 
 export const router = createBrowserRouter(
   [
-    {
-      path: 'share/:shareId',
-      element: <ShareRoute />,
-      errorElement: <RouteErrorBoundary />,
-    },
-    {
-      path: 'oauth',
-      errorElement: <RouteErrorBoundary />,
-      children: [
-        {
-          path: 'success',
-          element: <OAuthSuccess />,
-        },
-        {
-          path: 'error',
-          element: <OAuthError />,
-        },
-      ],
-    },
     {
       path: '/',
       element: <StartupLayout />,
@@ -93,7 +69,6 @@ export const router = createBrowserRouter(
             },
           ],
         },
-        dashboardRoutes,
         {
           path: '/',
           element: <Root />,
@@ -105,18 +80,6 @@ export const router = createBrowserRouter(
             {
               path: 'c/:conversationId?',
               element: <ChatRoute />,
-            },
-            {
-              path: 'search',
-              element: <Search />,
-            },
-            {
-              path: 'agents',
-              element: <AgentMarketplace />,
-            },
-            {
-              path: 'agents/:category',
-              element: <AgentMarketplace />,
             },
           ],
         },

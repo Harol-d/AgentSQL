@@ -1,23 +1,11 @@
-import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { useAuthContext } from '~/hooks/AuthContext';
-import StartupLayout from './Startup';
-import store from '~/store';
+import { Outlet } from 'react-router-dom';
 
 export default function LoginLayout() {
-  const { isAuthenticated } = useAuthContext();
-  const [queriesEnabled, setQueriesEnabled] = useRecoilState<boolean>(store.queriesEnabled);
-  useEffect(() => {
-    if (queriesEnabled) {
-      return;
-    }
-    const timeout: NodeJS.Timeout = setTimeout(() => {
-      setQueriesEnabled(true);
-    }, 500);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [queriesEnabled, setQueriesEnabled]);
-  return <StartupLayout isAuthenticated={isAuthenticated} />;
+  return (
+    <div className="flex h-screen w-full items-center justify-center">
+      <div className="w-full max-w-md">
+        <Outlet />
+      </div>
+    </div>
+  );
 }
