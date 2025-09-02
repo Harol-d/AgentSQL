@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asistente SQL - Chat DB</title>
+    
+    <!-- Librerías para Markdown y Syntax Highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <style>
         * {
             margin: 0;
@@ -253,6 +263,45 @@
             background: #ef4444;
         }
 
+        /* Estilos para código Markdown */
+        .message-content pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .message-content code {
+            background: #f1f3f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .message-content pre code {
+            background: transparent;
+            padding: 0;
+        }
+        
+        .message-content h1, .message-content h2, .message-content h3 {
+            margin: 1rem 0 0.5rem 0;
+            color: #dc2626;
+        }
+        
+        .message-content p {
+            margin: 0.5rem 0;
+        }
+        
+        .message-content ul, .message-content ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
@@ -416,7 +465,25 @@
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
-            messageContent.innerHTML = content;
+            
+            // Renderizar Markdown para mensajes del asistente
+            if (role === 'assistant' && typeof marked !== 'undefined') {
+                // Configurar marked para highlighting de código
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        if (lang && typeof Prism !== 'undefined' && Prism.languages[lang]) {
+                            return Prism.highlight(code, Prism.languages[lang], lang);
+                        }
+                        return code;
+                    },
+                    breaks: true,
+                    gfm: true
+                });
+                
+                messageContent.innerHTML = marked.parse(content);
+            } else {
+                messageContent.innerHTML = content;
+            }
             
             messageDiv.appendChild(avatar);
             messageDiv.appendChild(messageContent);

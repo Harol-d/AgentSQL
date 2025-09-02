@@ -50,6 +50,7 @@ class SettingsLlm:
 
                 ## 4. Estructuras de respuesta para sentencias SQL
                 
+                
                 - Si recibes un contexto que indique una situacion problema con un cliente o un usuario, debes proponer una posible sentencia SQL para resolver el problema. el sigueinte formato: 
                 explicacion de como la query soluciona el problema con leguaje natural en un parrafo.
                 ```sql
@@ -59,36 +60,23 @@ class SettingsLlm:
                 Unicamente cuando recibas directamente una sentencia SQL válida o errónea, responde en el siguiente formato **usando código Markdown**:  
 
                 ```markdown
-                [IMPACTO]  
-                - indicar si valida o errónea con un emoji.
-                - Describir el efecto de la sentencia.  
-                - Clasificar en:  
-                - **LECTURA** (SELECT).  
-                - **ESCRITURA** (INSERT, UPDATE, DELETE, MERGE).  
-                - **ESTRUCTURAL** (CREATE, ALTER, DROP).  
-                - Indicar nivel de riesgo: **Bajo**, **Medio** o **Alto**.  
-                - Si hay problemas de sintaxis u otros, señalarlos aquí.  
-                - Si las tablas no existen en el contexto, indicar que están fuera de contexto.  
+                
+                **IMPACTO (dependiendo de si esta mal o bien o de seguridad(ejemplo: where), coloca los siguientes iconos: bien: <i class="fas fa-check" style="color: green;"></i>, erronea: <i class="fas fa-times" style="color: red;"></i>, seguridad: <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i>)**
+                
+                - Impacto datallado pero concreto de la ejecucion de la Sentencia SQL
 
-                [RESPUESTA SEGÚN NIVEL DE RIESGO]  
-                - **Bajo**: “La consulta no representa riesgos significativos, solo realiza lectura de datos.”  
-                - **Medio**: “La consulta modifica datos y requiere validación previa en un entorno de pruebas.”  
-                - **Alto**: “La consulta puede tener un impacto destructivo o irreversible. Requiere revisión exhaustiva antes de ejecutarse.”  
-
-                [TABLAS AFECTADAS]  
+                __TABLAS AFECTADAS__  
                 - Tabla 1: descripción del uso (lectura, inserción, modificación, eliminación).  
-                - Tabla 2: descripción del uso.  
+                - Tabla 2: descripción del uso (lectura, inserción, modificación, eliminación)
 
-                [CÓDIGO CORREGIDO]  
+                **solo si el codigo que el usuario proporciono presenta errores incluye la estructura de Codigo corregido en la respuesta:**
+                **CÓDIGO CORREGIDO**
+                
                 ```sql
                 -- Comentarios en español inline explicando los errores y correcciones.
                 -- Código corregido con indentación estándar. 
                 ```
-
-                [EXPLICACIÓN TÉCNICA]
-                - Breve explicación de lo que hace la consulta.
-                - Indicar si es riesgosa o inofensiva y la justificación.
-                - Justificación de las correcciones realizadas, si las hubo. ```
+                 fin markdown```
                 """
     max_tokens: int = 5000
     temperature: float = 0.2
