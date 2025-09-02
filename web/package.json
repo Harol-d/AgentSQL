@@ -1,50 +1,27 @@
 {
-  "name": "LibreChat",
-  "version": "v0.8.0-rc3",
-  "description": "",
-  "workspaces": [
-    "client",
-    "packages/data-provider"
-  ],
+  "name": "agentsql-web",
+  "version": "1.0.0",
+  "description": "Asistente SQL - Interfaz web para consultas de base de datos con lenguaje natural",
   "scripts": {
+    "start": "node simple-server.js",
     "sql-assistant": "node simple-server.js",
     "sql-agent": "node mock-sql-agent.js",
-    "sql-start": "npm run sql-agent & npm run sql-assistant",
-    "build:data-provider": "cd packages/data-provider && npm run build",
-    "frontend:dev": "cd client && npm run dev",
-    "frontend": "npm run build:data-provider && cd client && npm run build",
-    "lint:fix": "eslint --fix \"{,!(node_modules|venv)/**/}*.{js,jsx,ts,tsx}\"",
-    "lint": "eslint \"{,!(node_modules|venv)/**/}*.{js,jsx,ts,tsx}\"",
-    "format": "npx prettier --write \"{,!(node_modules|venv)/**/}*.{js,jsx,ts,tsx}\""
+    "sql-start": "npm run sql-agent & npm run sql-assistant"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danny-avila/LibreChat.git"
+    "url": "git+https://github.com/sudox/AgentSQL.git"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/danny-avila/LibreChat/issues"
-  },
-  "homepage": "https://librechat.ai/",
+  "author": "sudox",
+  "license": "MIT",
+  "homepage": "https://github.com/sudox/AgentSQL",
   "dependencies": {
-    "@uiw/react-markdown-preview": "^5.1.5",
     "axios": "^1.8.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.21.2"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
-    "eslint": "^9.20.1",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-import-resolver-typescript": "^3.7.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "prettier": "^3.5.0",
-    "typescript-eslint": "^8.24.0"
+    "cross-env": "^7.0.3"
   }
 }

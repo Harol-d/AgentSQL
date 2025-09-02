@@ -53,10 +53,7 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-// Usuario actual
-app.get('/api/user', (req, res) => {
-  res.json(defaultUser);
-});
+
 
 // Endpoint para enviar mensajes
 app.post('/api/ask/:endpoint', async (req, res) => {
@@ -142,41 +139,6 @@ app.post('/api/ask/:endpoint', async (req, res) => {
 });
 
 
-
-
-
-
-// Modelos disponibles
-app.get('/api/models', (req, res) => {
-  res.json({
-    'SQL-Agent': [
-      {
-        id: 'sql-assistant-v1',
-        name: 'Asistente SQL Principal',
-        description: 'Modelo principal para consultas SQL y análisis de bases de datos'
-      },
-      {
-        id: 'sql-query-generator',
-        name: 'Generador de Consultas',
-        description: 'Especializado en generar consultas SQL optimizadas'
-      },
-      {
-        id: 'database-analyzer',
-        name: 'Analizador de BD',
-        description: 'Análisis y optimización de esquemas de base de datos'
-      }
-    ]
-  });
-});
-
-
-
-// Servir la aplicación para todas las rutas no API
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api/')) {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-  }
-});
 
 // Iniciar servidor
 app.listen(PORT, () => {
