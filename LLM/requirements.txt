@@ -1,6 +1,7 @@
 # LLM - sin versiones específicas para evitar conflictos
 langchain
 langchain-community
+langchain-experimental
 langchain-google-genai
 langchain-text-splitters
 langchain-pinecone

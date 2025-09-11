@@ -11,6 +11,14 @@ llmresponse = lmmController()
 dbModel  = databaseVectormodel()
 dbController = dataBaseVectorController()
 
+# @api.route("/query_sql", methods=["POST"])
+# def query_sql():
+#     prompt = request.get_json()
+#     response = llmresponse.query_sql(prompt)
+#     return jsonify({
+#         "LLM": response
+#     })
+
 @api.route("/response", methods=["POST"])
 def index():
     prompt = request.get_json()
@@ -30,7 +38,7 @@ def eliminar():
 @api.route("/crear")
 def crear():
     # Obtener la ruta absoluta del archivo SQL
-    sql_file_path = os.path.join(os.path.dirname(__file__), 'Serviciosvirtuales.sql')
+    sql_file_path = os.path.join(os.path.dirname(__file__), './db/Serviciosvirtuales.sql')
     chunks = dbController.crearChunks(sql_file_path)
     return jsonify({
         "mensaje": f"chunks creados correctamente: {chunks}"

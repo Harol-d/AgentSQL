@@ -302,6 +302,44 @@
             padding-left: 1.5rem;
         }
 
+        /* Estilos para el botón de ejecutar SQL */
+        .execute-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .execute-button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 0.5rem;
+        }
+
+        .execute-button:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+        }
+
+        .execute-button:active {
+            transform: translateY(0);
+        }
+
+        .execute-button i {
+            font-size: 0.75rem;
+        }
+
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
@@ -334,21 +372,6 @@
         <div class="welcome-message">
             <h2>¡Bienvenido al Asistente SQL!</h2>
             <p>Haz preguntas sobre tus bases de datos en lenguaje natural. El asistente generará las consultas SQL necesarias y te mostrará los resultados.</p>
-            
-            <div class="examples">
-                <div class="example-card" onclick="sendExample('Muéstrame todos los usuarios registrados')">
-                    <h3>👥 Consultar Usuarios</h3>
-                    <p>Muéstrame todos los usuarios registrados</p>
-                </div>
-                <div class="example-card" onclick="sendExample('¿Cuáles fueron las ventas del último mes?')">
-                    <h3>💰 Análisis de Ventas</h3>
-                    <p>¿Cuáles fueron las ventas del último mes?</p>
-                </div>
-                <div class="example-card" onclick="sendExample('Revisa el estado del inventario')">
-                    <h3>📦 Control de Inventario</h3>
-                    <p>Revisa el estado del inventario</p>
-                </div>
-            </div>
         </div>
 
         <div class="messages-container" id="messages">
@@ -481,6 +504,31 @@
                 });
                 
                 messageContent.innerHTML = marked.parse(content);
+                
+                // Agregar botones de ejecutar después de bloques de código SQL
+                const preElements = messageContent.querySelectorAll('pre');
+                preElements.forEach(pre => {
+                    const codeElement = pre.querySelector('code');
+                    if (codeElement) {
+                        // Verificar si parece ser código SQL
+                        const codeText = codeElement.textContent.toLowerCase();
+                        if (codeText.includes('select') || codeText.includes('insert') || 
+                            codeText.includes('update') || codeText.includes('delete') ||
+                            codeText.includes('create') || codeText.includes('alter')) {
+                            // Crear el botón de ejecutar
+                            const executeButton = document.createElement('button');
+                            executeButton.className = 'execute-button';
+                            executeButton.innerHTML = '<i class="fas fa-play"></i> Ejecutar';
+                            // Crear el contenedor alineado a la derecha
+                            const buttonContainer = document.createElement('div');
+                            buttonContainer.className = 'execute-button-container';
+                            buttonContainer.appendChild(executeButton);
+                            // Insertar el contenedor después del bloque pre
+                            pre.parentNode.insertBefore(buttonContainer, pre.nextSibling);
+                        }
+                    }
+                });
+    
             } else {
                 messageContent.innerHTML = content;
             }
