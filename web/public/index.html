@@ -477,6 +477,35 @@
             sendMessage();
         }
 
+        // Función para ejecutar SQL
+        async function executeSql(sqlCode) {
+            try {
+                const response = await fetch('/api/ask/SQL-Agent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sql: sqlCode,
+                        conversationId: conversationId,
+                        parentMessageId: Date.now().toString()
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addMessage('assistant', data.content || 'SQL ejecutado correctamente');
+                } else {
+                    addMessage('assistant', data.content || 'Error al ejecutar SQL');
+                }
+
+            } catch (error) {
+                console.error('Error ejecutando SQL:', error);
+                addMessage('assistant', '❌ Error al ejecutar SQL: ' + error.message);
+            }
+        }
+
         // Función para agregar mensaje
         function addMessage(role, content) {
             const messageDiv = document.createElement('div');
@@ -519,6 +548,12 @@
                             const executeButton = document.createElement('button');
                             executeButton.className = 'execute-button';
                             executeButton.innerHTML = '<i class="fas fa-play"></i> Ejecutar';
+                            
+                            // Agregar event listener para ejecutar SQL
+                            executeButton.addEventListener('click', () => {
+                                executeSql(codeElement.textContent);
+                            });
+                            
                             // Crear el contenedor alineado a la derecha
                             const buttonContainer = document.createElement('div');
                             buttonContainer.className = 'execute-button-container';

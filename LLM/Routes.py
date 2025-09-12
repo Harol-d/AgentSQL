@@ -7,39 +7,33 @@ from Controllers.dataBaseVectorController import dataBaseVectorController
 import os
 
 api = Blueprint('api', __name__)
-llmresponse = lmmController()
-dbModel  = databaseVectormodel()
-dbController = dataBaseVectorController()
-
-# @api.route("/query_sql", methods=["POST"])
-# def query_sql():
-#     prompt = request.get_json()
-#     response = llmresponse.query_sql(prompt)
-#     return jsonify({
-#         "LLM": response
-#     })
-
-@api.route("/response", methods=["POST"])
-def index():
-    prompt = request.get_json()
-    response = llmresponse.promptValidate(prompt)
+@api.route("/response/sql", methods=["POST"])
+def index_sql():
+    data = request.get_json()
+    response = lmmController().validateSQL(data)
     return jsonify({
         "LLM": response
     })
 
+@api.route("/response", methods=["POST"])
+def index():
+    data = request.get_json()
+    response = lmmController().promptValidate(data)
+    return jsonify({
+        "LLM": response
+    })
 
 @api.route("/eliminar")
 def eliminar():
-    dbModel.eliminarRecords()
+    databaseVectormodel.eliminarRecords()
     return jsonify({
         "mensaje": "Registros eliminados correctamente"
     })
 
 @api.route("/crear")
 def crear():
-    # Obtener la ruta absoluta del archivo SQL
     sql_file_path = os.path.join(os.path.dirname(__file__), './db/Serviciosvirtuales.sql')
-    chunks = dbController.crearChunks(sql_file_path)
+    chunks = dataBaseVectorController.crearChunks(sql_file_path)
     return jsonify({
         "mensaje": f"chunks creados correctamente: {chunks}"
     })

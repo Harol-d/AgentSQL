@@ -7,6 +7,7 @@ langchain-text-splitters
 langchain-pinecone
 langchain-huggingface
 
+
 # API
 flask
 requests

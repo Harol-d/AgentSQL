@@ -51,9 +51,9 @@ app.get('/api/config', (res) => {
 // Endpoint para enviar mensajes
 app.post('/api/ask/:endpoint', async (req, res) => {
   const { endpoint } = req.params;
-  const { text, conversationId, parentMessageId } = req.body;
+  const { text, sql, conversationId, parentMessageId } = req.body;
   
-  console.log(`📤 Enviando mensaje a ${endpoint}:`, text);
+  console.log(`📤 Enviando mensaje a ${endpoint}:`, text || sql);
   
   try {
     const axios = require('axios');
@@ -63,10 +63,12 @@ app.post('/api/ask/:endpoint', async (req, res) => {
       return res.status(404).json({ error: 'Endpoint no encontrado' });
     }
     
+    // Preparar el payload y endpoint - si viene sql, usar endpoint diferente
+    const payload = sql ? { sql: sql } : { prompt: text };
+    const apiEndpoint = sql ? '/response/sql' : '/response';
+    
     // Enviar al agente SQL
-    const response = await axios.post(`${endpointConfig.baseURL}/response`, {
-      prompt: text
-    }, {
+    const response = await axios.post(`${endpointConfig.baseURL}${apiEndpoint}`, payload, {
       headers: {
         'Authorization': `Bearer ${endpointConfig.apiKey}`,
         'Content-Type': 'application/json'

@@ -5,10 +5,10 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from Config.LlmConfig import SettingsLlm
 from Models.ModelFactory import factoryLlm
 
+
 class ModeLlm(SettingsLlm):
     def __init__(self):
-        self.factory = factoryLlm()
-        self.model = self.factory.getLlm(
+        self.model = factoryLlm().getLlm(
             self.LLM_PROVEEDOR,
             self.LLM_MODEL,
             self.API_KEY,
@@ -17,7 +17,8 @@ class ModeLlm(SettingsLlm):
         )
         # Memoria de conversación usando la nueva API
         self.chat_history = InMemoryChatMessageHistory()
-        self.max_messages = 6  # Limitar a 6 mensajes (3 intercambios)
+        self.max_messages = 6 
+        
 
     def sendPrompt(self, prompt: str, context: str):
         # Obtener historial de conversación
@@ -54,4 +55,6 @@ class ModeLlm(SettingsLlm):
         self.chat_history.add_ai_message(response)
         
         return response
+
+    
         

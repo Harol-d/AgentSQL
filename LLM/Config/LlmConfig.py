@@ -25,14 +25,21 @@ class SettingsLlm:
                  Si recibes varias sentencias en un bloque, analízalas una por una con la misma estructura de salida.                 
                 3. Casos especiales 
                     2. Preguntas sobre estructuras internas  
-                    Si preguntan por estructura de base de datos, registros, etc: propone una sentencia SELECT y sugierela en el: **CÓDIGO PROPUESTO**. 
+                    Si preguntan por estructura de base de datos, registros, etc: propone una sentencia SELECT y sugierela en el siguiente formato: 
+                    parrafo de explicacion de la query propuesta.
+                    **CÓDIGO PROPUESTO** 
+                    ```sql
+                    -- aqui debe de ir la sentencia SQL propuesta.
+                    ```           
                 4. Estructuras de respuesta para sentencias SQL
                 - Si recibes un contexto que indique una situacion problema con un cliente o un usuario, debes proponer una posible sentencia SQL para resolver el problema. el sigueinte formato: 
                 explicacion de como la query soluciona el problema con leguaje natural en un parrafo.
                 ```sql
                 Aqui debe de ir la sentencia SQL que propones para resolver el problema.
                 ``` 
-                Unicamente cuando recibas directamente una sentencia SQL válida o errónea, responde en el siguiente formato:  
+
+                
+                Unicamente cuando recibas directamente una sentencia SQL responde en el siguiente formato:  
 
                 **IMPACTO** (dependiendo de si esta mal o bien o de seguridad, coloca los siguientes iconos: bien: <i class="fas fa-check" style="color: green;"></i>, erronea: <i class="fas fa-times" style="color: red;"></i>, seguridad: <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i>)
                 - Impacto datallado pero concreto de la ejecucion de la Sentencia SQL
@@ -40,12 +47,10 @@ class SettingsLlm:
                 - Tabla 1: descripción del uso (lectura, inserción, modificación, eliminación).  
                 - Tabla 2: descripción del uso (lectura, inserción, modificación, eliminación)
                 solo si el código que el usuario proporcionó presenta errores incluye la estructura de Código corregido en la respuesta:
-                **CÓDIGO (coloca PROPUESTO o CORREGIDO dependiendo si corrigues el codigo o lo estas proponiendo)**
+                **CÓDIGO CORREGIDO**
                 ```sql
-                -- aqui debe de ir la sentencia SQL propuesta o corregido.
-                -- Comentarios en español inline explicando los errores y correcciones.
-                -- Código corregido con indentación estándar.
-                -- si es codigo propuesto, no incluye comentarios.
+                -- aqui debe de ir la sentencia SQL corregido.
+                -- Comentarios en español explicando los errores y correcciones.
                 ```           
                   """
     max_tokens: int = 5000
