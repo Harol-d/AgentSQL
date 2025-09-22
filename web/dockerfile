@@ -6,4 +6,4 @@ COPY . /web
 
 RUN npm install
 
-CMD ["node", "simple-server.js"]
+CMD ["node", "server.js"]

@@ -6,7 +6,7 @@ class lmmController:
     def __init__(self):
         self.model = ModeLlm()
         self.database = dataBaseVectorController()
-        self.agentSql = AgentSqlModel()
+    
     def promptValidate(self, data: dict):
             try:
                 prompt = data.get("prompt")
@@ -42,5 +42,5 @@ class lmmController:
         except (ValueError, TypeError) as e:
             return str(e)
         
-        response = self.agentSql.executeSql(sql)
+        response = AgentSqlModel().executeSql(sql)
         return response
