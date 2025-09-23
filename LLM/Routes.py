@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify, request
 from Controllers.LmmController import lmmController
 from Models.databaseVectorModel import databaseVectormodel
 from Controllers.dataBaseVectorController import dataBaseVectorController
-# from Models.LlmModel import ModeLlm
-# from Controllers.dataBaseVectorController import DataBaseVectorController
 import os
 
 api = Blueprint('api', __name__)

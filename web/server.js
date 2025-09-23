@@ -1,11 +1,13 @@
 
+require('dotenv').config({ path: '../.env' });
+
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 // Middleware básico
 app.use(cors({
@@ -25,7 +27,7 @@ const endpoints = {
   'SQL-Agent': {
     name: 'SQL-Agent',
     type: 'custom',
-    baseURL: process.env.SQL_AGENT_API_URL || 'http://localhost:4000',
+    baseURL: process.env.API_URL,
     iconURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCAxMkwxMy4wOSAxNS43NEwxMiAyMkwxMC45MSAxNS43NEw0IDEyTDEwLjkxIDguMjZMMTIgMloiIGZpbGw9IiNEQzI2MjYiLz4KPC9zdmc+'
   }
 };
@@ -127,7 +129,7 @@ app.post('/api/ask/:endpoint', async (req, res) => {
       conversationId: req.body.conversationId,
       parentMessageId: req.body.parentMessageId,
       role: 'assistant',
-      content: `❌ Error al procesar la consulta: ${error.message}\\n\\n🔧 **Posibles soluciones:**\\n- Verificar que el servicio SQL Agent esté ejecutándose en http://localhost:8000\\n- Revisar la conexión de red\\n- Comprobar los logs del servidor`,
+      content: `❌ Error al procesar la consulta: ${error.message}\\n\\n🔧 **Posibles soluciones:**\\n- Verificar que el servicio SQL Agent esté ejecutándose en http://localhost:4000\\n- Revisar la conexión de red\\n- Comprobar los logs del servidor`,
       error: true
     });
   }
@@ -139,7 +141,7 @@ app.post('/api/ask/:endpoint', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Asistente SQL Server running on http://localhost:${PORT}`);
   console.log(`📱 Open your browser to start chatting with your SQL databases!`);
-  console.log(`🔗 Connected to SQL Agent: ${process.env.APP_URL}`);
+  console.log(`🔗 Connected to SQL Agent: ${process.env.API_URL}`);
 });
 
 module.exports = app;
