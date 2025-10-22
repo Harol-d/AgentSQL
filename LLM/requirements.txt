@@ -1,18 +1,11 @@
-# LLM - sin versiones específicas para evitar conflictos
 langchain
 langchain-community
 langchain-experimental
 langchain-google-genai
 langchain-text-splitters
-langchain-pinecone
 langchain-huggingface
-
-
-# API
 flask
 requests
 flask-cors
-# Embedding
 sentence-transformers
-# Database Vector
-pinecone
+google-cloud-storage
