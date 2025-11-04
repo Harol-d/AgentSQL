@@ -1,11 +1,15 @@
+from Models.bucketModel import BucketModel
 from Models.LlmModel import ModeLlm
-from Controllers.dataBaseVectorController import dataBaseVectorController
+from Models.VectorSearch import SearchVectorModel
 from Models.AgentSqlModel import AgentSqlModel
+from Services.doc import DocService
 
 class lmmController:
     def __init__(self):
         self.model = ModeLlm()
-        self.database = dataBaseVectorController()
+        self.docService = DocService()
+        self.bucketModel = BucketModel()
+        self.searchVectorModel = SearchVectorModel()
     
     def promptValidate(self, data: dict):
             try:
@@ -25,8 +29,10 @@ class lmmController:
             except (ValueError, TypeError) as e:
                 return str(e)
             
-            # response = ModeLlm.sendPrompt(self, prompt)
-            context = self.database.obtenerRecords(prompt)
+            embeddings = self.docService.crearEmbeddings(prompt)
+            similitud = self.searchVectorModel.buscar_similitud(embeddings,3)
+            file_content = self.bucketModel.obtenerEmbeddings()
+            context = self.docService.fetch_text_chunks(similitud, file_content)
             response = self.model.sendPrompt(prompt, context)
             return response
 

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from Controllers.LmmController import lmmController
-from Models.databaseVectorModel import databaseVectormodel
-from Controllers.dataBaseVectorController import dataBaseVectorController
+from Models.bucketModel import BucketModel
+from Controllers.bucketController import BucketController
 import os
 
 api = Blueprint('api', __name__)
@@ -14,24 +14,17 @@ def index_sql():
     })
 
 @api.route("/response", methods=["POST"])
-def index():
+def response():
     data = request.get_json()
     response = lmmController().promptValidate(data)
     return jsonify({
         "LLM": response
     })
 
-@api.route("/eliminar")
-def eliminar():
-    databaseVectormodel.eliminarRecords()
-    return jsonify({
-        "mensaje": "Registros eliminados correctamente"
-    })
-
 @api.route("/crear")
 def crear():
     sql_file_path = os.path.join(os.path.dirname(__file__), './db/Serviciosvirtuales.sql')
-    chunks = dataBaseVectorController.crearChunks(sql_file_path)
+    response = BucketController().subirArchivo(sql_file_path)
     return jsonify({
-        "mensaje": f"chunks creados correctamente: {chunks}"
+        "Bucket": response
     })

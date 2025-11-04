@@ -1,9 +1,6 @@
-from pinecone import Pinecone
-from langchain_pinecone import PineconeVectorStore 
 from google.cloud import storage
 import dotenv
 import os
-
 dotenv.load_dotenv("../.env")
 
 class BucketModel:
@@ -11,7 +8,15 @@ class BucketModel:
         self.client = storage.Client(project=os.getenv("PROJECT_ID"))
         self.bucket = self.client.bucket(os.getenv("BUCKET"))
 
-    def agregarRecords(self, chunks: str):
-        blob = self.bucket.blob(f"{os.getenv('BLOB_NAME')}/{chunks}")
-        blob.upload_from_string(chunks)
-        return blob
+    def obtenerEmbeddings(self):
+        blob = self.bucket.blob("embeddings/embeddings.json")
+        if blob.exists():
+            return blob.download_as_text()
+        return None
+
+    def subirData(self, jsonl: str):
+        blob = self.bucket.blob("embeddings/embeddings.json")
+        blob.upload_from_string(jsonl, content_type="application/json")  
+        return {
+            "mensaje": "Archivo subido correctamente"
+        }

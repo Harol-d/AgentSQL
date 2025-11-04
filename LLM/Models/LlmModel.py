@@ -20,10 +20,9 @@ class ModeLlm(SettingsLlm):
         self.max_messages = 6 
         
 
-    def sendPrompt(self, prompt: str, context: str):
+    def sendPrompt(self, prompt: str, context: list):
         # Obtener historial de conversación
         # messages_history = self.chat_history.messages
-        
         # Crear template con historial
         messages = [
             ("system", self.modelRole),
