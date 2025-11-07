@@ -1,7 +1,7 @@
 # from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.chains.combine_documents.stuff import create_stuff_documents_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
 from Config.LlmConfig import SettingsLlm
 from Models.ModelFactory import factoryLlm
 
