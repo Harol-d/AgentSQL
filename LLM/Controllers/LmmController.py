@@ -30,7 +30,7 @@ class lmmController:
                 return str(e)
             
             embeddings = self.docService.crearEmbeddings(prompt)
-            similitud = self.searchVectorModel.buscar_similitud(embeddings,3)
+            similitud = self.searchVectorModel.buscar_similitud(embeddings,3)            
             file_content = self.bucketModel.obtenerEmbeddings()
             context = self.docService.fetch_text_chunks(similitud, file_content)
             response = self.model.sendPrompt(prompt, context)

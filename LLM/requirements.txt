@@ -1,11 +1,12 @@
 langchain
+langchain-core
 langchain-community
-langchain-experimental
-langchain-google-genai
 langchain-text-splitters
+langchain-google-genai
 langchain-huggingface
 flask
-requests
 flask-cors
-sentence-transformers
+requests
 google-cloud-storage
+google-cloud-aiplatform
+python-dotenv

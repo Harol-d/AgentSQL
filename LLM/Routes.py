@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from Controllers.LmmController import lmmController
-from Models.bucketModel import BucketModel
 from Controllers.bucketController import BucketController
 import os
 
@@ -12,6 +11,15 @@ def index_sql():
     return jsonify({
         "LLM": response
     })
+
+# Health check endpoint para Cloud Run
+@api.route("/")
+def index():
+    return jsonify({
+        "status": "healthy",
+        "service": "AgentSQL LLM Service",
+        "version": "1.0"
+    }), 200
 
 @api.route("/response", methods=["POST"])
 def response():

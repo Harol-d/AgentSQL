@@ -7,16 +7,16 @@ class factoryLlm:
                 model=LLM_MODEL, 
                 google_api_key=API_KEY, 
                 temperature=temperature,
-                max_output_tokens=max_tokens  # Para Gemini
+                max_output_tokens=max_tokens
             )
             return modelo
 
         if LLM_PROVEEDOR == "OpenAI":
-            from langchain_openai import ChatOpenAI  # Cambiado de OpenAI a ChatOpenAI
+            from langchain_openai import ChatOpenAI 
             modelo = ChatOpenAI(
                 model=LLM_MODEL, 
                 api_key=API_KEY, 
                 temperature=temperature,
-                max_tokens=max_tokens  # Para OpenAI
+                max_tokens=max_tokens 
             )
             return modelo

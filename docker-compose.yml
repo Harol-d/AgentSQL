@@ -1,11 +1,4 @@
 services:
-  web:
-    build: ./web/
-    ports:
-      - 3000:3000
-    depends_on:
-      - llm
-
   llm:
     build: ./LLM/ 
     ports:
@@ -13,7 +6,10 @@ services:
     env_file:
       - .env
     environment:
-      - PINECONE_API_KEY=${PINECONE_API_KEY}
       - LLM_PROVEEDOR=${LLM_PROVEEDOR}
       - LLM_MODEL=${LLM_MODEL}
       - API_KEY=${API_KEY}
+      - PROJECT_ID=${PROJECT_ID}
+      - BUCKET=${BUCKET}
+      - ENDPOINT_ID=${ENDPOINT_ID}
+      - DEPLOYED_INDEX_ID=${DEPLOYED_INDEX_ID}
