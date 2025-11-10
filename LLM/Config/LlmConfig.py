@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
 import os
-import dotenv
-
-dotenv.load_dotenv("../.env")
 
 @dataclass
 class SettingsLlm:

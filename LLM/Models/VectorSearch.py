@@ -2,9 +2,6 @@
 from google.cloud import aiplatform
 from langchain_huggingface import HuggingFaceEmbeddings
 import os
-import dotenv
-
-dotenv.load_dotenv("../.env")
 
 class SearchVectorModel:
     def __init__(self):

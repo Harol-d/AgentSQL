@@ -3,6 +3,7 @@ from Controllers.LmmController import lmmController
 from Controllers.bucketController import BucketController
 import os
 
+
 api = Blueprint('api', __name__)
 @api.route("/response/sql", methods=["POST"])
 def index_sql():
@@ -35,4 +36,10 @@ def crear():
     response = BucketController().subirArchivo(sql_file_path)
     return jsonify({
         "Bucket": response
+    })
+
+api.route("mirar")
+def mirar():
+    return jsonify({
+        "Secrets": os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     })

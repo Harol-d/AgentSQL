@@ -10,5 +10,4 @@ flask-cors
 requests
 google-cloud-storage
 google-cloud-aiplatform
-python-dotenv
 sentence-transformers

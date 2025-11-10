@@ -1,7 +1,5 @@
 from google.cloud import storage
-import dotenv
 import os
-dotenv.load_dotenv("../.env")
 
 class BucketModel:
     def __init__(self):
