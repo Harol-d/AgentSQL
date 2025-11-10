@@ -38,7 +38,7 @@ def crear():
         "Bucket": response
     })
 
-api.route("mirar")
+@api.route("/mirar")
 def mirar():
     return jsonify({
         "Secrets": os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
