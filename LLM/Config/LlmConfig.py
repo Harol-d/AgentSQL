@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional
 import os
+import dotenv
+
+dotenv.load_dotenv("../.env")
 
 @dataclass
 class SettingsLlm:
-    LLM_PROVEEDOR: Optional[str] = os.getenv("LLM_PROVEEDOR")
-    LLM_MODEL: Optional[str] = os.getenv("LLM_MODEL")
-    API_KEY: Optional[str] = os.getenv("API_KEY") 
+    LLM_MODEL: str = os.getenv("LLM_MODEL")
+    API_KEY: str = os.getenv("API_KEY")
     modelRole: str = f"""
                 Eres un revisor senior especializado exclusivamente en SQL Server.  
                 Tu función es analizar sentencias SQL, detectar problemas, identificar tablas afectadas y describir el impacto que puede tener cada instrucción en la base de datos.  
@@ -34,10 +36,7 @@ class SettingsLlm:
                 ```sql
                 Aqui debe de ir la sentencia SQL que propones para resolver el problema.
                 ``` 
-
-                
                 Unicamente cuando recibas directamente una sentencia SQL responde en el siguiente formato:  
-
                 **IMPACTO** (dependiendo de si esta mal o bien o de seguridad, coloca los siguientes iconos: bien: <i class="fas fa-check" style="color: green;"></i>, erronea: <i class="fas fa-times" style="color: red;"></i>, seguridad: <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i>)
                 - Impacto datallado pero concreto de la ejecucion de la Sentencia SQL
                 __TABLAS AFECTADAS__  

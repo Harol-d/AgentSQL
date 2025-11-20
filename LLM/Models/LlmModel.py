@@ -1,59 +1,47 @@
-# from langchain_core.messages import HumanMessage, AIMessage
-from langchain_core.chat_history import InMemoryChatMessageHistory
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from Config.LlmConfig import SettingsLlm
-from Models.ModelFactory import factoryLlm
+from google import genai
+from typing import List, Optional
+from google.genai import types
 
+# import os
 
 class ModeLlm(SettingsLlm):
     def __init__(self):
-        self.model = factoryLlm().getLlm(
-            self.LLM_PROVEEDOR,
-            self.LLM_MODEL,
-            self.API_KEY,
-            self.temperature,
-            self.max_tokens
+        self.client = genai.Client(api_key=self.API_KEY)
+
+    def search_file_store(self,
+    query: str,
+    store_names: List[str],
+    metadata_filter: Optional[str] = None
+    ) -> genai.types.GenerateContentResponse:
+        """
+        Realiza una búsqueda en uno o más File Search Stores.
+
+        Args:
+        query: Pregunta o consulta en lenguaje natural
+        store_names: Lista de stores donde buscar
+        metadata_filter: Filtro opcional de metadata
+
+    Returns:
+        Respuesta del modelo con el contenido generado
+        """
+        file_search_config = types.FileSearch(
+            file_search_store_names=store_names
         )
-        # Memoria de conversación usando la nueva API
-        self.chat_history = InMemoryChatMessageHistory()
-        self.max_messages = 6 
-        
 
-    def sendPrompt(self, prompt: str, context: list):
-        # Obtener historial de conversación
-        # messages_history = self.chat_history.messages
-        # Crear template con historial
-        messages = [
-            ("system", self.modelRole),
-            ("system", "You must respond guided only by the following context: {context}"),
-            ("human", "{input}")
-        ]
-        
-        # Agregar historial de conversación (últimos mensajes)
-        # recent_messages = messages_history[-self.max_messages:] if len(messages_history) > self.max_messages else messages_history
-        # for message in recent_messages:
-        #     if isinstance(message, HumanMessage):
-        #         messages.append(("human", message.content))
-        #     elif isinstance(message, AIMessage):
-        #         messages.append(("assistant", message.content))
-        
-        # # Agregar prompt actual
-        # messages.append(("human", "{input}"))
-        
-        prompt_template = ChatPromptTemplate.from_messages(messages)
-        document_chain = create_stuff_documents_chain(self.model, prompt_template)
-        
-        response = document_chain.invoke({
-            "input": prompt,
-            "context": context
-        })
-        
-        # Guardar en memoria usando la nueva API
-        self.chat_history.add_user_message(prompt)
-        self.chat_history.add_ai_message(response)
-        
+        if metadata_filter:
+            file_search_config.metadata_filter = metadata_filter
+
+        response = self.client.models.generate_content(
+            model=self.LLM_MODEL,
+            contents=query,
+            config=types.GenerateContentConfig(
+                tools=[
+                    types.Tool(
+                    file_search=file_search_config
+                )
+            ]
+        )
+    )
+
         return response
-
-    
-        

@@ -1,5 +1,7 @@
 from google.cloud import storage
+import dotenv
 import os
+dotenv.load_dotenv("../.env")
 
 class BucketModel:
     def __init__(self):
@@ -12,9 +14,11 @@ class BucketModel:
             return blob.download_as_text()
         return None
 
-    def subirData(self, jsonl: str):
-        blob = self.bucket.blob("embeddings/embeddings.json")
-        blob.upload_from_string(jsonl, content_type="application/json")  
-        return {
-            "mensaje": "Archivo subido correctamente"
-        }
+    def subirData(self, jsonl: str) -> bool:
+        try: 
+            blob = self.bucket.blob("embeddings/embeddings.json")
+            blob.upload_from_string(jsonl, content_type="application/json")  
+            return True
+        except Exception as e:
+            print(f"Error al subir el archivo al bucket: {str(e)}")
+            return False

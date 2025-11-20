@@ -1,14 +1,19 @@
 from flask import Blueprint, jsonify, request
 from Controllers.LmmController import lmmController
 from Controllers.bucketController import BucketController
+from Services.doc import DocService
 import os
-
+import dotenv
+dotenv.load_dotenv(".env")
+os.environ["API_KEY"] = os.getenv("API_KEY")
+os.environ["PATH_FILE"] = os.getenv("PATH_FILE")
+os.environ["STORE_NAME"] = os.getenv("STORE_NAME")
 
 api = Blueprint('api', __name__)
 @api.route("/response/sql", methods=["POST"])
 def index_sql():
     data = request.get_json()
-    response = lmmController().validateSQL(data)
+    response = lmmController().responseAgentSQL(data)
     return jsonify({
         "LLM": response
     })
@@ -25,21 +30,17 @@ def index():
 @api.route("/response", methods=["POST"])
 def response():
     data = request.get_json()
-    response = lmmController().promptValidate(data)
+    response = lmmController().responseModel(data)
     return jsonify({
-        "LLM": response
+        "LLM": response.text
     })
 
-@api.route("/crear")
+@api.route("/subir")
 def crear():
-    sql_file_path = os.path.join(os.path.dirname(__file__), './db/Serviciosvirtuales.sql')
-    response = BucketController().subirArchivo(sql_file_path)
+    doc = DocService(api_key=os.environ["API_KEY"], path=os.environ["PATH_FILE"])
+    response = doc.upload_file_to_store(store_name=os.environ["STORE_NAME"],
+    display_name="Serviciosvirtuales",
+    mime_type="text/plain")
     return jsonify({
-        "Bucket": response
-    })
-
-@api.route("/mirar")
-def mirar():
-    return jsonify({
-        "Secrets": os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+        "file Storage": response
     })

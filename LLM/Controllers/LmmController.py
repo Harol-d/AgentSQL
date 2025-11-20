@@ -1,52 +1,34 @@
-from Models.bucketModel import BucketModel
+# from Models.bucketModel import BucketModel
 from Models.LlmModel import ModeLlm
-from Models.VectorSearch import SearchVectorModel
+# from Models.VectorSearch import SearchVectorModel
 from Models.AgentSqlModel import AgentSqlModel
-from Services.doc import DocService
+import os
+# from Services.doc import DocService
 
 class lmmController:
-    def __init__(self):
+    def __init__(self) -> None:
         self.model = ModeLlm()
-        self.docService = DocService()
-        self.bucketModel = BucketModel()
-        self.searchVectorModel = SearchVectorModel()
-    
-    def promptValidate(self, data: dict):
-            try:
-                prompt = data.get("prompt")
-                
-                if prompt is None:
-                    raise ValueError("Error: No se ha proporcionado un prompt.")
-                
-                if not isinstance(prompt, str):
-                    raise TypeError("Error: El prompt debe ser un String.")
-                
-                if prompt.strip() == "":
-                    raise ValueError("Error: El prompt no puede estar vacío.")
-                
-                prompt = prompt.strip()
-                
-            except (ValueError, TypeError) as e:
-                return str(e)
-            
-            embeddings = self.docService.crearEmbeddings(prompt)
-            similitud = self.searchVectorModel.buscar_similitud(embeddings,3)            
-            file_content = self.bucketModel.obtenerEmbeddings()
-            context = self.docService.fetch_text_chunks(similitud, file_content)
-            response = self.model.sendPrompt(prompt, context)
-            return response
+        self.agentSql = AgentSqlModel()
 
-    def validateSQL (self, data: dict):
-        try:
-            sql = data.get("sql")
-            if sql is None:
-                raise ValueError("Error: No se ha proporcionado un sql.")
-            if not isinstance(sql, str):
-                raise TypeError("Error: El sql debe ser un String.")
-            if sql.strip() == "":
-                raise ValueError("Error: El prompt no puede estar vacío.")
-        except (ValueError, TypeError) as e:
-            return str(e)
-        
-        response = AgentSqlModel().executeSql(sql)
-        return response
+    def validarEntrada(self,entrada: str) -> bool:
+         match entrada:
+            case None:
+                return False
+            case str() if entrada.strip() == "":
+                return False
+            case str():
+                return True
+            case _:
+                return False
+
+    def responseModel(self,data: dict) -> str:
+        prompt = data.get("prompt")
+        if self.validarEntrada(prompt):
+            return self.model.search_file_store(prompt,store_names=[os.environ["STORE_NAME"]])
+        return ("no se proporciono un prompt")
+
+    def responseAgentSQL (self, data: dict) -> str:
+        sql = data.get("sql")
+        if self.validarEntrada(sql):
+            return self.agentSql.executeSql(sql)
+        return ("no se proporciono un Query SQL")
