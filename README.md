@@ -2,7 +2,7 @@
 
 ## ¿Qué es AgentSQL?
 
-AgentSQL es un asistente inteligente especializado en SQL que ayuda a ingenieros y desarrolladores a revisar, corregir y mejorar código SQL. Es un chatbot diseñado específicamente para la Cámara y Comercio que combina inteligencia artificial con una base de conocimientos especializada.
+AgentSQL es un asistente inteligente especializado en SQL que ayuda a ingenieros y desarrolladores a revisar, corregir y mejorar código SQL.
 
 ## ¿Cómo funciona?
 
