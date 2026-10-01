@@ -41,8 +41,12 @@ def crear():
     Returns:
         JSON con el resultado de la operación
     """
+    file = request.json.get("file")
+    if not file:
+        return jsonify({"error": "file is required"}), 400
+    
     store = fileController().get_search_stores()
-    response = fileController().upload_file_to_store(store_name=f"{store[0]}",
+    response = fileController().upload_file_to_store(store_name=f"{store[0],file}",
     display_name="Prueba",
     )
     return jsonify({
@@ -56,7 +60,8 @@ def files():
 
 @api.route("/files/create", methods=["POST"])
 def create_file_search_store():
-    display_name = "prueba" 
+    data = request.get_json()
+    display_name = data.get("display_name")
     if not display_name:
         return jsonify({"error": "display_name is required"}), 400
 
@@ -77,7 +82,7 @@ def delete_file_search_store():
     try:
         result = fileController().delete_file_search_store()
         return jsonify({
-            "message": "File Search Store deleted successfully",
+            "message": "File Search Store all deleted successfully",
             "result": result
         }), 200
     except Exception as e:
