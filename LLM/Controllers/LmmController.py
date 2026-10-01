@@ -1,6 +1,6 @@
 # from Models.bucketModel import BucketModel
 from Models.LlmModel import ModeLlm
-# from Models.VectorSearch import SearchVectorModel
+from Controllers.fileController import fileController
 from Models.AgentSqlModel import AgentSqlModel
 import os
 # from Services.doc import DocService
@@ -8,7 +8,9 @@ import os
 class lmmController:
     def __init__(self) -> None:
         self.model = ModeLlm()
-        self.agentSql = AgentSqlModel()
+        # self.agentSql = AgentSqlModel()
+        self.fileController = fileController()
+        # self.stores = self.fileController.get_file_search_stores()
 
     def validarEntrada(self,entrada: str) -> bool:
          match entrada:
@@ -24,11 +26,14 @@ class lmmController:
     def responseModel(self,data: dict) -> str:
         prompt = data.get("prompt")
         if self.validarEntrada(prompt):
-            return self.model.search_file_store(prompt,store_names=[os.environ["STORE_NAME"]])
+            return self.model.search_file_store(prompt,store_names=["fileSearchStores/prueba-ayro3avqop20"])
         return ("no se proporciono un prompt")
 
-    def responseAgentSQL (self, data: dict) -> str:
-        sql = data.get("sql")
-        if self.validarEntrada(sql):
-            return self.agentSql.executeSql(sql)
-        return ("no se proporciono un Query SQL")
+    def get_Models(self) -> list:
+        
+        return self.model.models.list()
+    # def responseAgentSQL (self, data: dict) -> str:
+    #     sql = data.get("sql")
+    #     if self.validarEntrada(sql):
+    #         return self.agentSql.executeSql(sql)
+    #     return ("no se proporciono un Query SQL")

@@ -44,4 +44,4 @@ class ModeLlm(SettingsLlm):
         )
     )
 
-        return response
+        return response.text

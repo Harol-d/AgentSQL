@@ -1,13 +1,9 @@
-from functools import wraps
-from flask import Flask , jsonify, request,current_app
+from flask import Blueprint, jsonify, request,current_app
 from Controllers.LmmController import lmmController
-from Controllers.bucketController import BucketController
-from Services.doc import DocService
-from Services.AuthService import AuthService
-import sys
-# import os
+from Controllers.fileController import fileController
 
-api = Flask('api', __name__)
+
+api = Blueprint('api', __name__)
 @api.route("/response/sql", methods=["POST"])
 def index_sql():
     data = request.get_json()
@@ -16,35 +12,24 @@ def index_sql():
         "LLM": response
     })
 
-# Health check endpoint para Cloud Run
+# Health check endpoint
 @api.route("/")
 def index():
-    current_app.logger.info("Health check endpoint called.")
     return jsonify({
         "status": "healthy",
         "service": "AgentSQL LLM Service",
         "version": "1.0"
     }), 200
 
-
-# def login_required(f):
-#     @wraps(f)
-#     def decorated_function(*args, **kwargs):
-#         # Usamos tu clase para verificar
-#         if not AuthService.is_authenticated():
-#             return redirect(url_for("login"))
-#         return f(*args, **kwargs)
-#     return decorated_function
-
 @api.route("/response", methods=["POST"])
 def response():
     data = request.get_json()
     response = lmmController().responseModel(data)
     return jsonify({
-        "LLM": response.text
+        "LLM": response
     })
 
-@api.route("/subir")
+@api.route("/subir", methods=["POST"])
 def crear():
 
     """ Endpoint para subir un archivo a un File Search Store en Google GenAI.
@@ -56,16 +41,52 @@ def crear():
     Returns:
         JSON con el resultado de la operación
     """
-    # path = f"{os.getcwd()}/src/"
-    # print (f"Path actual: {path}")
-    # doc = DocService(api_key=os.environ["API_KEY"], path=path)
-    # return jsonify({
-    #     "file Storage": "Archivo subido correctamente"
-    # })
-    
-    # response = doc.upload_file_to_store(store_name=os.environ["STORE_NAME"],
-    # display_name="Serviciosvirtuales",
-    # mime_type="text/plain")
+    store = fileController().get_search_stores()
+    response = fileController().upload_file_to_store(store_name=f"{store[0]}",
+    display_name="Prueba",
+    )
     return jsonify({
         "file Storage": response
+    })
+@api.route("/get/stores")
+def files():
+    return jsonify({
+        "Storages": f"{fileController().get_file_search_stores()}"
+    })
+
+@api.route("/files/create", methods=["POST"])
+def create_file_search_store():
+    display_name = "prueba" 
+    if not display_name:
+        return jsonify({"error": "display_name is required"}), 400
+
+    try:
+        store = fileController().create_file_search_store(display_name)
+        return jsonify({
+            "message": "File Search Store created successfully",
+            "store": {
+                "name": store.name,
+                "display_name": display_name
+            }
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route("/files/delete", methods=["DELETE"])
+def delete_file_search_store():
+    try:
+        result = fileController().delete_file_search_store()
+        return jsonify({
+            "message": "File Search Store deleted successfully",
+            "result": result
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route("/get/files/")
+def get_files_to_store():
+    stores = fileController().get_search_stores()
+    files = fileController().get_files_to_store(store_name=f"{stores[0]}")
+    return jsonify({
+        "Files in Store": str(files)
     })

@@ -1,12 +1,14 @@
 import os
 from typing import Optional, List, Dict
 from google import genai
+from Services.AuthService import AuthService
 import time
 from google.genai import types
 
 class DocService():
-    def __init__(self, api_key:str, path:str) -> None:
-        self.client = genai.Client(api_key=api_key)
+    def __init__(self, path:str) -> None:
+        self.secret = AuthService().get_secrets()
+        self.client = genai.Client(api_key=self.secret["key"])
         self.path = path
     
     def create_file_search_store(self,display_name: str) -> genai.types.FileSearchStore | None:
@@ -24,7 +26,7 @@ class DocService():
             config={'display_name': display_name}
             )
 
-            print(f"✅ Store creado exitosamente")
+            print(f" Store creado exitosamente")
             print(f"   • Nombre: {store.name}")
             print(f"   • Display Name: {display_name}")
 
@@ -78,7 +80,15 @@ class DocService():
 
         except Exception as e:
             return f"Error al indexar el archivo: {str(e)}"
-
+    def get_file_search_stores(self) -> List[genai.types.FileSearchStore]:
+        stores = []
+        try:
+            for i in self.client.file_search_stores.list():
+                stores.append(i.name)
+            return stores
+        except Exception as e:
+            print(f"Error al obtener los stores: {str(e)}")
+            return []
     def delete_file_search_stores_all(self) -> str:
         try: 
             for i in self.client.file_search_stores.list():
@@ -86,3 +96,10 @@ class DocService():
             return f"Stores eliminados {i.name}"
         except Exception as e:
             return f"No se encontraron stores para eliminar {str(e)}"
+
+    def get_files_to_store(self,store_name: str) -> List[str]:
+        try:
+            return str(self.client.file_search_stores.get(name=store_name))
+        except Exception as e:
+            print(f"Error al obtener los archivos del store: {str(e)}")
+            return []

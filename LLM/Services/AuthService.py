@@ -17,7 +17,6 @@ class AuthService:
 
     def get_secrets(self) -> dict:
         return {
-            "api_key": os.getenv("API_KEY"),
-            "store_name": os.getenv("STORE_NAME"),
-            "path_file": os.getenv("PATH_FILE")
+            "key": os.getenv("API_KEY"),
+            "store_name": os.getenv("STORE_NAME")
         }
