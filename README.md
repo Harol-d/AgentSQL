@@ -1,4 +1,4 @@
-# AgentSQL - Cámara y Comercio
+# AgentSQL
 
 ## ¿Qué es AgentSQL?
 
