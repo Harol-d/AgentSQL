@@ -13,7 +13,7 @@ class DataBaseRelModel:
         self.db_uri = f"sqlite:///{self.db_path}"
 
     def getDb(self):
-        db = SQLDatabase.from_uri(self.db_uri)
+        db = SQLDatabase.from_uri(self.db_uri)  
         return db
 
 

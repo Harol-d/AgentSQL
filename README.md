@@ -41,10 +41,10 @@ Seguimos una **arquitectura MVC** donde:
 
 ## Tecnologías Utilizadas
 
-- **Backend**: Python, Flask, LangChain, Pinecone
-- **Frontend**: React, JavaScript
+- **Backend**: Python, Flask, LangChain 
+- **Frontend**: Angular, 
 - **IA**: Google Gemini / OpenAI 
-- **Despliegue**: Docker, Docker 
+- **Despliegue**: Docker, Google cloud 
 
 ## Instalación y Uso
 
