@@ -11,7 +11,7 @@ class ModeLlm(SettingsLlm):
 
     def search_file_store(self,
     query: str,
-    store_names: List[str],
+    store_names:Optional[List[str]] = None,
     metadata_filter: Optional[str] = None
     ) -> genai.types.GenerateContentResponse:
         """
@@ -25,23 +25,32 @@ class ModeLlm(SettingsLlm):
     Returns:
         Respuesta del modelo con el contenido generado
         """
-        file_search_config = types.FileSearch(
-            file_search_store_names=store_names
-        )
 
         if metadata_filter:
-            file_search_config.metadata_filter = metadata_filter
+                    file_search_config.metadata_filter = metadata_filter
+        
+        if len(store_names) > 0:
+            print(f"respondiendo con contexto")
+            file_search_config = types.FileSearch(
+                file_search_store_names=store_names
+            )
+            response = self.client.models.generate_content(
+                        model=self.LLM_MODEL,
+                        contents=query,
+                        config=types.GenerateContentConfig(
+                            tools=[
+                                types.Tool(
+                                file_search=file_search_config
+                            )
+                        ]
+                    )
+            )
+            return response.text
 
-        response = self.client.models.generate_content(
-            model=self.LLM_MODEL,
-            contents=query,
-            config=types.GenerateContentConfig(
-                tools=[
-                    types.Tool(
-                    file_search=file_search_config
-                )
-            ]
-        )
-    )
-
-        return response.text
+        else:
+            print(f"respondiendo sin contexto")
+            response = self.client.models.generate_content(
+                model=self.LLM_MODEL,
+                contents=query
+            )
+            return response.text

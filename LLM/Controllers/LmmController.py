@@ -25,13 +25,14 @@ class lmmController:
 
     def responseModel(self,data: dict) -> str:
         prompt = data.get("prompt")
+        print(f"Prompt recibido: {prompt}")
+        print(f"Stores disponibles: {len(fileController().get_search_stores())}")
         if self.validarEntrada(prompt):
-            return self.model.search_file_store(prompt,store_names=["fileSearchStores/prueba-ayro3avqop20"])
-        return ("no se proporciono un prompt")
+            return self.model.search_file_store(prompt,fileController().get_search_stores())
 
     def get_Models(self) -> list:
-        
         return self.model.models.list()
+    
     # def responseAgentSQL (self, data: dict) -> str:
     #     sql = data.get("sql")
     #     if self.validarEntrada(sql):

@@ -6,12 +6,11 @@ import time
 from google.genai import types
 
 class DocService():
-    def __init__(self, path:str) -> None:
+    def __init__(self) -> None:
         self.secret = AuthService().get_secrets()
         self.client = genai.Client(api_key=self.secret["key"])
-        self.path = path
     
-    def create_file_search_store(self,display_name: str) -> genai.types.FileSearchStore | None:
+    def create_file_search_store(self,display_name: str,file) -> genai.types.FileSearchStore | None:
         """
     Crea un nuevo File Search Store.
 
@@ -21,21 +20,36 @@ class DocService():
     Returns:
         FileSearchStore object con información del store creado
     """
-        try:
+        try:  
             store = self.client.file_search_stores.create(
-            config={'display_name': display_name}
+                config={'display_name': display_name}
             )
 
             print(f" Store creado exitosamente")
             print(f"   • Nombre: {store.name}")
             print(f"   • Display Name: {display_name}")
-
-            return store
+            
+            ruta_directorio = os.path.join(os.getcwd(), "src", store.name)
+            print(f"   • Ruta del directorio: {ruta_directorio}")
+            
+            # Extraer el nombre del archivo como string
+            ruta_completa = os.path.join(ruta_directorio, file.filename)
+            
+            os.makedirs(ruta_directorio, exist_ok=True)
+            
+            # Si deseas guardar el archivo en el directorio creado:
+            file.save(ruta_completa)
+            
+            return  {
+                "store": store.name,
+                "file_path": ruta_completa
+            }
         except Exception as e:
             print(f"Error al crear el store: {str(e)}")
-            return None
+        return None
 
     def upload_file_to_store(self,
+        file: str,
         store_name: str,
         display_name: Optional[str] = None,
         custom_metadata: Optional[List[Dict]] = None,
@@ -45,7 +59,7 @@ class DocService():
         Sube e indexa un archivo directamente en un File Search Store.
 
         Args:
-            file_path: Ruta local al archivo
+            file: Ruta local al archivo
             store_name: Nombre del store (ej: 'fileSearchStores/abc123')
             display_name: Nombre para identificar el archivo (opcional)
             custom_metadata: Lista de metadatos personalizados (opcional)
@@ -64,23 +78,24 @@ class DocService():
 
             # Iniciar la operación de upload
             operation = self.client.file_search_stores.upload_to_file_search_store(
-                file=self.path,
+                file=file,
                 file_search_store_name=store_name,
                 config=config if config else None,
                 )
 
             # Esperar a que la indexación complete
-            print(f"⏳ Indexando (esto puede tomar algunos segundos)...")
+            print(f"Indexando (esto puede tomar algunos segundos)...")
             while not operation.done:
                 time.sleep(5)
                 operation = self.client.operations.get(operation)
 
-            print(f"✅ Archivo indexado \n")
+            print(f"Archivo indexado \n")
             return f"Archivo subido e indexado correctamente"
 
         except Exception as e:
             return f"Error al indexar el archivo: {str(e)}"
-    def get_file_search_stores(self) -> List[genai.types.FileSearchStore]:
+        
+    def get_file_search_stores(self) -> List[str]:
         stores = []
         try:
             for i in self.client.file_search_stores.list():

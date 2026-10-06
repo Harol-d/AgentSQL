@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request,current_app
+from flask import Blueprint, jsonify, request
 from Controllers.LmmController import lmmController
 from Controllers.fileController import fileController
 
@@ -31,51 +31,39 @@ def response():
 
 @api.route("/subir", methods=["POST"])
 def crear():
+    
+    if not "file" in request.files:
+        return jsonify({"error": "file is required"}), 400
 
-    """ Endpoint para subir un archivo a un File Search Store en Google GenAI.
-    Args:
-        store_name: Nombre del store (ej: 'fileSearchStores/abc123')
-        display_name: Nombre para identificar el archivo (opcional)
-        custom_metadata: Lista de metadatos personalizados (opcional)
-        mime_type: Tipo MIME del archivo (opcional)
-    Returns:
-        JSON con el resultado de la operación
-    """
-    file = request.json.get("file")
-    if not file:
+    if request.files["file"].filename == "":
         return jsonify({"error": "file is required"}), 400
     
-    store = fileController().get_search_stores()
-    response = fileController().upload_file_to_store(store_name=f"{store[0],file}",
-    display_name="Prueba",
-    )
+    file = request.files["file"]
+    print(f"Archivo recibido: {file.filename}")
+    
+    data = fileController().create_file_search_store(file.filename,file)
+    response = fileController().upload_file_to_store(data['file_path'],data['store'],file.filename)
     return jsonify({
         "file Storage": response
     })
+
 @api.route("/get/stores")
 def files():
     return jsonify({
-        "Storages": f"{fileController().get_file_search_stores()}"
+        "Storages": f"{fileController().get_search_stores()}"
     })
 
-@api.route("/files/create", methods=["POST"])
-def create_file_search_store():
-    data = request.get_json()
-    display_name = data.get("display_name")
-    if not display_name:
-        return jsonify({"error": "display_name is required"}), 400
-
-    try:
-        store = fileController().create_file_search_store(display_name)
-        return jsonify({
-            "message": "File Search Store created successfully",
-            "store": {
-                "name": store.name,
-                "display_name": display_name
-            }
-        }), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# @api.route("/files/create", methods=["POST"])
+# def create_file_search_store(file):
+#     display_name = file.filename
+#     try:
+#         store = fileController().create_file_search_store(display_name)
+#         return {
+#             "store_name": store.name,
+#             "display_name": display_name
+#         }
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
 
 @api.route("/files/delete", methods=["DELETE"])
 def delete_file_search_store():
@@ -88,10 +76,10 @@ def delete_file_search_store():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@api.route("/get/files/")
+@api.route("/files/get")
 def get_files_to_store():
     stores = fileController().get_search_stores()
-    files = fileController().get_files_to_store(store_name=f"{stores[0]}")
+    files = fileController().get_files_to_store(store_name=f"{stores}")
     return jsonify({
         "Files in Store": str(files)
     })
