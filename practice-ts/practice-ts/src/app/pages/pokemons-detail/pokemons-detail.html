@@ -1,0 +1,5 @@
+<h1>lista de pokemones: {{ pokemons.length }}</h1>
+<div> @for (poke of pokemons; track poke.id) {
+  <app-card-poke [title]="poke.type"/>
+}
+</div>
