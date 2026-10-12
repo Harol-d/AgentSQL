@@ -1,13 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { Pokemon } from './pokemon';
+import { LmmService } from './lmm-service';
 
-
-describe('Pokemon', () => {
-  let service: Pokemon;
+describe('LmmService', () => {
+  let service: LmmService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Pokemon);
+    service = TestBed.inject(LmmService);
   });
 
   it('should be created', () => {

@@ -6,6 +6,7 @@
 /out-tsc
 /bazel-out
 
+node_modules
 # Node
 /node_modules
 npm-debug.log
@@ -45,3 +46,7 @@ Thumbs.db
 
 pnpm-lock.yaml
 pnpm-workspace.yaml
+.angular
+.prettierrc
+.editorconfig
+README.md

@@ -11,6 +11,7 @@ web/node_modules
 /.pnp
 .pnp.js
 
+node_modules/
 # testing
 /coverage
 
@@ -29,4 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 /LLM/db
 /web/pnpm-lock.yaml
-
+pnpm-lock.yaml
+practice-ts/angular.json
+practice-ts/package-lock.json
+practice-ts/.prettierrc
+practice-ts/.editorconfig
