@@ -1,0 +1,29 @@
+<ion-footer>
+  <ion-toolbar>
+    <!-- Botón izquierdo de agregar (+) -->
+    <ion-buttons slot="start">
+      <ion-button aria-label="Agregar">
+        <ion-icon shape="round" slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Campo de texto de entrada -->
+    <ion-input type="text"
+      [(ngModel)]="textoConsulta"
+      [placeholder]="marcador"
+      (keyup.enter)="enviarConsulta()">
+    </ion-input>
+
+    <!-- Opciones del lado derecho -->
+    <ion-buttons slot="end">
+      <!-- <ion-button>
+        Flash
+        <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+      </ion-button> -->
+        <!-- Botón de enviar -->
+        <ion-button aria-label="Enviar" (click)="enviarConsulta()">
+            <ion-icon shape="round" slot="icon-only" name="send-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

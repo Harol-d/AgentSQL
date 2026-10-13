@@ -1,0 +1,22 @@
+<app-bar></app-bar>
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Chat de IA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="main-content" [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Chat de IA</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <app-content-query-user [consulta]="consultaUsuario"></app-content-query-user>
+  <app-content-response-model [responseModel]="respuestaModelo"></app-content-response-model>
+  <!-- Add your page content here -->
+  <app-prompt (consultaEnviada)="alEnviarConsulta($event)"></app-prompt>
+</ion-content>
