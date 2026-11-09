@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class IaService {
-  private readonly apiUrl = 'http://localhost:4000/response';
+  private readonly apiUrl = 'https://agent-sql.vercel.app/response';
 
   async enviarPrompt(prompt: string): Promise<string> {
     console.log('[IaService] Prompt que se envía:', prompt);

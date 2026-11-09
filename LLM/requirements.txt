@@ -4,6 +4,5 @@ langchain-google-genai
 flask
 flask-cors
 requests
-google-cloud-storage
 google-cloud-aiplatform
 python-dotenv

@@ -1,4 +1,5 @@
 import os
+import tempfile
 from typing import Optional, List, Dict
 from google import genai
 from Services.AuthService import AuthService
@@ -10,7 +11,7 @@ class DocService():
         self.secret = AuthService().get_secrets()
         self.client = genai.Client(api_key=self.secret["key"])
     
-    def create_file_search_store(self,display_name: str,file) -> genai.types.FileSearchStore | None:
+    def create_file_search_store(self,display_name: str,file) -> Dict[str, str] | None:
         """
     Crea un nuevo File Search Store.
 
@@ -18,9 +19,10 @@ class DocService():
         display_name: Nombre descriptivo para identificar el store
 
     Returns:
-        FileSearchStore object con información del store creado
+        Store y ruta temporal del archivo, o None si ocurre un error
     """
-        try:  
+        ruta_completa = None
+        try:
             store = self.client.file_search_stores.create(
                 config={'display_name': display_name}
             )
@@ -29,15 +31,12 @@ class DocService():
             print(f"   • Nombre: {store.name}")
             print(f"   • Display Name: {display_name}")
             
-            ruta_directorio = os.path.join(os.getcwd(), "src", store.name)
-            print(f"   • Ruta del directorio: {ruta_directorio}")
-            
-            # Extraer el nombre del archivo como string
-            ruta_completa = os.path.join(ruta_directorio, file.filename)
-            
-            os.makedirs(ruta_directorio, exist_ok=True)
-            
-            # Si deseas guardar el archivo en el directorio creado:
+            extension = os.path.splitext(os.path.basename(file.filename))[1]
+            with tempfile.NamedTemporaryFile(
+                dir="/tmp", suffix=extension, delete=False
+            ) as temp_file:
+                ruta_completa = temp_file.name
+
             file.save(ruta_completa)
             
             return  {
@@ -46,6 +45,11 @@ class DocService():
             }
         except Exception as e:
             print(f"Error al crear el store: {str(e)}")
+            if ruta_completa:
+                try:
+                    os.remove(ruta_completa)
+                except FileNotFoundError:
+                    pass
         return None
 
     def upload_file_to_store(self,

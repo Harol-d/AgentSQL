@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, jsonify, request
 from Controllers.LmmController import lmmController
 from Controllers.fileController import fileController
@@ -41,8 +42,20 @@ def crear():
     file = request.files["file"]
     print(f"Archivo recibido: {file.filename}")
     
-    data = fileController().create_file_search_store(file.filename,file)
-    response = fileController().upload_file_to_store(data['file_path'],data['store'],file.filename)
+    controller = fileController()
+    data = controller.create_file_search_store(file.filename,file)
+    if data is None:
+        return jsonify({"error": "No se pudo crear el store o guardar el archivo"}), 500
+
+    try:
+        response = controller.upload_file_to_store(
+            data["file_path"], data["store"], file.filename
+        )
+        if response.startswith("Error al indexar"):
+            return jsonify({"error": response}), 500
+    finally:
+        os.remove(data["file_path"])
+
     return jsonify({
         "file Storage": response
     })
