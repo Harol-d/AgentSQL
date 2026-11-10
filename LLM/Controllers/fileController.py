@@ -13,7 +13,9 @@ class fileController:
     def create_file_search_store(self, display_name: str,file: str) -> dict | None:
         return self.docService.create_file_search_store(display_name,file)
     
-    def delete_file_search_store(self):
+    def delete_file_search_store(self, store_name: str | None = None):
+        if store_name is not None:
+            return self.docService.delete_file_search_store(store_name)
         return self.docService.delete_file_search_stores_all()
     
     def get_files_to_store(self,store_name: str):

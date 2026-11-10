@@ -57,7 +57,8 @@ def crear():
         os.remove(data["file_path"])
 
     return jsonify({
-        "file Storage": response
+        "file Storage": response,
+        "store_name": data["store"]
     })
 
 @api.route("/get/stores")
@@ -84,6 +85,27 @@ def delete_file_search_store():
         result = fileController().delete_file_search_store()
         return jsonify({
             "message": "File Search Store all deleted successfully",
+            "result": result
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route("/files/delete-one", methods=["DELETE"])
+def delete_one_file_search_store():
+    data = request.get_json(silent=True)
+    store_name = data.get("store_name") if isinstance(data, dict) else None
+    if (
+        not isinstance(store_name, str)
+        or not store_name.startswith("fileSearchStores/")
+        or len(store_name.split("/")) != 2
+        or not store_name.split("/")[1]
+    ):
+        return jsonify({"error": "A valid store_name is required"}), 400
+
+    try:
+        result = fileController().delete_file_search_store(store_name)
+        return jsonify({
+            "message": "File Search Store deleted successfully",
             "result": result
         }), 200
     except Exception as e:

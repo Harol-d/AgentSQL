@@ -116,6 +116,13 @@ class DocService():
         except Exception as e:
             return f"No se encontraron stores para eliminar {str(e)}"
 
+    def delete_file_search_store(self, store_name: str) -> str:
+        self.client.file_search_stores.delete(
+            name=store_name,
+            config={'force': True}
+        )
+        return f"Store eliminado {store_name}"
+
     def get_files_to_store(self,store_name: str) -> List[str]:
         try:
             return str(self.client.file_search_stores.get(name=store_name))

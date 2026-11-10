@@ -9,7 +9,6 @@ import { IonCard, IonCardContent, IonText } from '@ionic/angular';
 })
 export class ContentQueryUserComponent  implements OnInit {
   @Input() consulta: string = '';
-  // @Input() time: number = 0;
   constructor() { }
 
   ngOnInit() {}

@@ -31,9 +31,24 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
+              },
+              {
+                "glob": "image.svg",
+                "input": "node_modules/@fortawesome/fontawesome-free/svgs/solid",
+                "output": "assets/fontawesome/solid"
+              },
+              {
+                "glob": "file-lines.svg",
+                "input": "node_modules/@fortawesome/fontawesome-free/svgs/solid",
+                "output": "assets/fontawesome/solid"
+              },
+              {
+                "glob": "xmark.svg",
+                "input": "node_modules/@fortawesome/fontawesome-free/svgs/solid",
+                "output": "assets/fontawesome/solid"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss","node_modules/@fortawesome/fontawesome-free/css/all.min.css"],
             "scripts": [],
             "browser": "src/main.ts"
           },

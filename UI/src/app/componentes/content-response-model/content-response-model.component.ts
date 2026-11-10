@@ -9,7 +9,6 @@ import { IonCard, IonCardContent, IonText } from '@ionic/angular';
 })
 export class ContentResponseModelComponent  implements OnInit {
   @Input() responseModel: string = '';
-  // @Output () query: string = '';
   constructor() {
   }
 

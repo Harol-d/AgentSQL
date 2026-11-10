@@ -1,13 +1,46 @@
 <ion-footer>
+  @if (archivosAdjuntos.length > 0) {
+    <div class="archivos-adjuntos" aria-label="Archivos seleccionados">
+      @for (archivo of archivosAdjuntos; track $index) {
+        <ion-chip>
+          <ion-label>
+            {{ archivo.file.name }}
+            @if (archivo.subiendo) {
+              (Subiendo e indexando...)
+            } @else if (archivo.error) {
+              ({{ archivo.error }})
+            }
+          </ion-label>
+          <ion-button
+            fill="clear"
+            size="small"
+            [attr.aria-label]="'Quitar ' + archivo.file.name"
+            [disabled]="archivo.subiendo"
+            (click)="quitarArchivo($index)">
+            <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+          </ion-button>
+        </ion-chip>
+      }
+    </div>
+  }
+
   <ion-toolbar>
     <!-- Botón izquierdo de agregar (+) -->
     <ion-buttons slot="start">
-      <ion-button aria-label="Agregar">
-        <ion-icon shape="round" slot="icon-only" name="add-outline"></ion-icon>
+      <ion-button aria-label="Agregar" (click)="mostrarOpcionesArchivo()">
+        <ion-icon shape="round" slot="icon-only">
+          <i class="fa-solid fa-plus"></i>
+        </ion-icon>
       </ion-button>
     </ion-buttons>
 
-    <!-- Campo de texto de entrada -->
+    <input
+      #selectorArchivo
+      type="file"
+      multiple
+      hidden
+      (change)="agregarArchivos($event)">
+
     <ion-input type="text"
       [(ngModel)]="textoConsulta"
       [placeholder]="marcador"
@@ -22,7 +55,9 @@
       </ion-button> -->
         <!-- Botón de enviar -->
         <ion-button aria-label="Enviar" (click)="enviarConsulta()">
-            <ion-icon shape="round" slot="icon-only" name="send-outline"></ion-icon>
+            <ion-icon shape="round" slot="icon-only">
+              <i class="fa-solid fa-up-long"></i>
+            </ion-icon>
         </ion-button>
     </ion-buttons>
   </ion-toolbar>
