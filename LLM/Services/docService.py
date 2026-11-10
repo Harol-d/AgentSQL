@@ -4,7 +4,7 @@ from typing import Optional, List, Dict
 from google import genai
 from Services.AuthService import AuthService
 import time
-from google.genai import types
+# from google.genai import types
 
 class DocService():
     def __init__(self) -> None:

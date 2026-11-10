@@ -1,14 +1,31 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
 import os
 import dotenv
 
 dotenv.load_dotenv("../.env")
 
+_runtime_llm_settings: tuple[str, str] | None = None
+
+
+def get_api_key() -> str:
+    runtime_api_key = _runtime_llm_settings[0] if _runtime_llm_settings else None
+    return runtime_api_key or os.getenv("API_KEY") or ""
+
+
+def get_llm_model() -> str:
+    runtime_model = _runtime_llm_settings[1] if _runtime_llm_settings else None
+    return runtime_model or os.getenv("LLM_MODEL") or ""
+
+
+def configure_llm(api_key: str, model: str) -> None:
+    global _runtime_llm_settings
+    _runtime_llm_settings = (api_key, model)
+
+
 @dataclass
 class SettingsLlm:
-    LLM_MODEL: str = os.getenv("LLM_MODEL")
-    API_KEY: str = os.getenv("API_KEY")
+    LLM_MODEL: str = field(default_factory=get_llm_model)
+    API_KEY: str = field(default_factory=get_api_key)
     modelRole: str = f"""
                 Eres un revisor senior especializado exclusivamente en SQL Server.  
                 Tu función es analizar sentencias SQL, detectar problemas, identificar tablas afectadas y describir el impacto que puede tener cada instrucción en la base de datos.  

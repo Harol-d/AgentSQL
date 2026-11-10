@@ -3,10 +3,31 @@ from google import genai
 from typing import List, Optional
 from google.genai import types
 
-# import os
+
+def list_available_models(api_key: str) -> list[dict[str, str]]:
+    client = genai.Client(api_key=api_key)
+    available_models = []
+
+    for model in client.models.list():
+        name = getattr(model, "name", None)
+        if not name:
+            continue
+
+        supported_actions = getattr(model, "supported_actions", None)
+        if supported_actions and "generateContent" not in supported_actions:
+            continue
+
+        model_id = name.removeprefix("models/")
+        available_models.append({
+            "id": model_id,
+            "display_name": getattr(model, "display_name", None) or model_id,
+        })
+
+    return available_models
 
 class ModeLlm(SettingsLlm):
     def __init__(self):
+        super().__init__()
         self.client = genai.Client(api_key=self.API_KEY)
 
     def search_file_store(self,

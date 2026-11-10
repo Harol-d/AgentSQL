@@ -1,64 +1,45 @@
 <ion-footer>
-  @if (archivosAdjuntos.length > 0) {
-    <div class="archivos-adjuntos" aria-label="Archivos seleccionados">
-      @for (archivo of archivosAdjuntos; track $index) {
-        <ion-chip>
-          <ion-label>
-            {{ archivo.file.name }}
-            @if (archivo.subiendo) {
-              (Subiendo e indexando...)
-            } @else if (archivo.error) {
-              ({{ archivo.error }})
-            }
-          </ion-label>
-          <ion-button
-            fill="clear"
-            size="small"
-            [attr.aria-label]="'Quitar ' + archivo.file.name"
-            [disabled]="archivo.subiendo"
-            (click)="quitarArchivo($index)">
-            <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
-          </ion-button>
-        </ion-chip>
-      }
+  @if (archivo) {
+    <div class="archivos-adjuntos" aria-label="Archivo seleccionado">
+      <ion-chip>
+        <ion-label>{{ archivo.nombre }}</ion-label>
+        <ion-button
+          fill="clear"
+          size="small"
+          aria-label="Quitar archivo"
+          [disabled]="subiendoArchivo || eliminandoArchivo"
+          (click)="quitarArchivo()">
+          <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-chip>
     </div>
   }
 
   <ion-toolbar>
-    <!-- Botón izquierdo de agregar (+) -->
     <ion-buttons slot="start">
-      <ion-button aria-label="Agregar" (click)="mostrarOpcionesArchivo()">
-        <ion-icon shape="round" slot="icon-only">
-          <i class="fa-solid fa-plus"></i>
-        </ion-icon>
+      <ion-button aria-label="Agregar archivo" [disabled]="subiendoArchivo || eliminandoArchivo" (click)="mostrarOpcionesArchivo()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
 
     <input
       #selectorArchivo
       type="file"
-      multiple
       hidden
-      (change)="agregarArchivos($event)">
+      (change)="agregarArchivo($event)">
 
-    <ion-input type="text"
-      [(ngModel)]="textoConsulta"
+    <ion-input
+      type="text"
+      fill="solid"
+      [(ngModel)]="Query"
       [placeholder]="marcador"
       (keyup.enter)="enviarConsulta()">
     </ion-input>
 
-    <!-- Opciones del lado derecho -->
     <ion-buttons slot="end">
-      <!-- <ion-button>
-        Flash
-        <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
-      </ion-button> -->
-        <!-- Botón de enviar -->
-        <ion-button aria-label="Enviar" (click)="enviarConsulta()">
-            <ion-icon shape="round" slot="icon-only">
-              <i class="fa-solid fa-up-long"></i>
-            </ion-icon>
-        </ion-button>
+      <ion-button aria-label="Enviar" [disabled]="subiendoArchivo || eliminandoArchivo" (click)="enviarConsulta()">
+        <ion-icon slot="icon-only" name="send-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>

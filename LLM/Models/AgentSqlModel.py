@@ -6,6 +6,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 class AgentSqlModel(SettingsLlm):
     def __init__(self):
+        super().__init__()
         self.model = ChatGoogleGenerativeAI(
                 model=self.LLM_MODEL,
                 google_api_key=self.API_KEY,

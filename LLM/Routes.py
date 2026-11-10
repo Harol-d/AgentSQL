@@ -2,9 +2,86 @@ import os
 from flask import Blueprint, jsonify, request
 from Controllers.LmmController import lmmController
 from Controllers.fileController import fileController
+from Config.LlmConfig import configure_llm, get_api_key, get_llm_model
+from Models.LlmModel import list_available_models
+from google.genai.errors import APIError
 
 
 api = Blueprint('api', __name__)
+
+
+def _settings_response(models: list[dict[str, str]] | None = None):
+    response = {
+        "model": get_llm_model(),
+        "has_api_key": bool(get_api_key()),
+    }
+    if models is not None:
+        response["models"] = models
+    return response
+
+
+@api.route("/settings", methods=["GET"])
+def get_settings():
+    return jsonify(_settings_response()), 200
+
+
+@api.route("/settings/models", methods=["POST"])
+def get_available_models():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "El cuerpo debe ser un objeto JSON."}), 400
+
+    api_key = data.get("api_key", "")
+    if not isinstance(api_key, str):
+        return jsonify({"error": "La API key debe ser texto."}), 400
+    api_key = api_key.strip()
+    api_key = api_key or get_api_key()
+    if not api_key:
+        return jsonify({"error": "La API key de Google es obligatoria."}), 400
+
+    try:
+        models = list_available_models(api_key)
+    except APIError:
+        api.logger.warning("Google no permitió consultar los modelos disponibles.")
+        return jsonify({
+            "error": "No se pudieron consultar los modelos. Verifica la API key y vuelve a intentar."
+        }), 502
+
+    return jsonify({"models": models}), 200
+
+
+@api.route("/settings", methods=["POST"])
+def save_settings():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "El cuerpo debe ser un objeto JSON."}), 400
+
+    model = data.get("model")
+    if not isinstance(model, str) or not model.strip():
+        return jsonify({"error": "Debes seleccionar un modelo."}), 400
+
+    api_key = data.get("api_key", "")
+    if not isinstance(api_key, str):
+        return jsonify({"error": "La API key debe ser texto."}), 400
+    api_key = api_key.strip() or get_api_key()
+    if not api_key:
+        return jsonify({"error": "La API key de Google es obligatoria."}), 400
+
+    try:
+        models = list_available_models(api_key)
+    except APIError:
+        api.logger.warning("Google no permitió validar la configuración solicitada.")
+        return jsonify({
+            "error": "No se pudo validar la API key con Google. Verifica la clave y vuelve a intentar."
+        }), 502
+
+    if not any(item["id"] == model.strip() for item in models):
+        return jsonify({"error": "El modelo seleccionado no está disponible para esta API key."}), 400
+
+    configure_llm(api_key, model.strip())
+    return jsonify(_settings_response(models)), 200
+
+
 @api.route("/response/sql", methods=["POST"])
 def index_sql():
     data = request.get_json()

@@ -1,0 +1,62 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Configuración de IA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <section class="settings">
+    <h1>Modelo de Google</h1>
+    <p>Configura la API key y el modelo que usará el servidor para generar respuestas.</p>
+    <p class="privacy-note">La API key se mantiene solo en la memoria del servidor y no se devuelve al navegador.</p>
+
+    <form [formGroup]="settingsForm" (ngSubmit)="guardar()">
+      <ion-item>
+        <ion-input
+          label="API key de Google"
+          labelPlacement="stacked"
+          type="password"
+          autocomplete="new-password"
+          formControlName="apiKey"
+          [placeholder]="hasApiKey ? 'Dejar vacío para conservar la actual' : 'Ingresa tu API key'">
+        </ion-input>
+      </ion-item>
+      @if (settingsForm.controls.apiKey.touched && settingsForm.controls.apiKey.invalid && !hasApiKey) {
+        <ion-note color="danger">La API key es obligatoria.</ion-note>
+      }
+
+      <ion-button type="button" fill="outline" (click)="cargarModelos()" [disabled]="cargando">
+        {{ cargando ? 'Consultando modelos...' : 'Cargar modelos disponibles' }}
+      </ion-button>
+
+      <ion-item>
+        <ion-select
+          label="Modelo"
+          labelPlacement="stacked"
+          placeholder="Selecciona un modelo"
+          formControlName="model">
+          @for (model of models; track model.id) {
+            <ion-select-option [value]="model.id">{{ model.display_name }} ({{ model.id }})</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      @if (settingsForm.controls.model.touched && settingsForm.controls.model.invalid) {
+        <ion-note color="danger">Selecciona un modelo disponible.</ion-note>
+      }
+
+      <ion-button type="submit" [disabled]="guardando || cargando || !models.length">
+        {{ guardando ? 'Guardando...' : 'Guardar configuración' }}
+      </ion-button>
+    </form>
+
+    @if (errorMessage) {
+      <ion-note color="danger" role="alert">{{ errorMessage }}</ion-note>
+    }
+    @if (successMessage) {
+      <ion-note color="success" role="status">{{ successMessage }}</ion-note>
+    }
+  </section>
+</ion-content>

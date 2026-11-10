@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+ion-card {
+  max-width: min(90%, 48rem);
+  margin: 0.75rem 1rem;
+  border-radius: 1rem 1rem 1rem 0.25rem;
+  --background: var(--ion-card-background, #fff);
+  --color: var(--ion-text-color, #273246);
+  box-shadow: 0 0.2rem 0.8rem rgba(35, 45, 70, 0.07);
+  animation: response-in 220ms ease-out both;
+}
+
+ion-card-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@keyframes response-in {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ion-card { animation: none; }
+}

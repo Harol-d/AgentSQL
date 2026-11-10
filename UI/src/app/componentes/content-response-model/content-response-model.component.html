@@ -1,7 +1,9 @@
-<ion-card color="light">
-  <ion-card-content>
-    <ion-text color="dark">
-      Response model: {{ responseModel }}
-    </ion-text>
-  </ion-card-content>
-</ion-card>
+@if (responseModel) {
+  @for (respuesta of [responseModel]; track respuesta) {
+    <ion-card>
+      <ion-card-content>
+        <ion-text>{{ respuesta }}</ion-text>
+      </ion-card-content>
+    </ion-card>
+  }
+}

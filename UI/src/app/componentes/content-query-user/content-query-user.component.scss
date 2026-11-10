@@ -1,0 +1,18 @@
+:host {
+  display: flex;
+  justify-content: flex-end;
+}
+
+ion-card {
+  max-width: min(85%, 42rem);
+  margin: 0.75rem 1rem;
+  border-radius: 1rem 1rem 0.25rem 1rem;
+  --background: #f0edff;
+  --color: #30285a;
+  box-shadow: none;
+}
+
+ion-card-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

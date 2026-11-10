@@ -1,0 +1,21 @@
+.settings {
+  display: grid;
+  gap: 1rem;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.settings h1,
+.settings p {
+  margin: 0;
+}
+
+.settings form {
+  display: grid;
+  gap: 1rem;
+}
+
+.privacy-note {
+  color: var(--ion-color-medium);
+}

@@ -1,14 +1,7 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActionSheetController, IonInput, IonButton, IonIcon, IonButtons, IonToolbar, IonFooter, IonChip, IonLabel } from '@ionic/angular';
-import { IaService } from '../../services/ia-service';
-
-interface ArchivoAdjunto {
-  file: File;
-  subiendo: boolean;
-  storeName?: string;
-  error?: string;
-}
+import { Archivo } from '../../models/archivo';
 
 @Component({
   selector: 'app-prompt',
@@ -16,37 +9,37 @@ interface ArchivoAdjunto {
   styleUrls: ['./prompt.component.scss'],
   imports: [FormsModule, IonInput, IonButton, IonButtons, IonIcon, IonToolbar, IonFooter, IonChip, IonLabel],
 })
-export class PromptComponent implements OnInit {
-  marcador: string = 'pregunta cualquier cosa';
-  textoConsulta: string = '';
-  archivosAdjuntos: ArchivoAdjunto[] = [];
+export class PromptComponent {
+  marcador = 'pregunta cualquier cosa';
+  Query: string = '';
 
+  @Input() archivo: Archivo | null = null;
+  @Input() subiendoArchivo = false;
+  @Input() eliminandoArchivo = false;
   @Output() consultaEnviada = new EventEmitter<string>();
-  @Output() archivosSeleccionados = new EventEmitter<File[]>();
+  @Output() archivoSeleccionado = new EventEmitter<Archivo | null>();
+  @Output() archivoEliminarSolicitado = new EventEmitter<Archivo>();
 
   @ViewChild('selectorArchivo') selectorArchivo!: ElementRef<HTMLInputElement>;
 
-  constructor(
-    private readonly actionSheetController: ActionSheetController,
-    private readonly iaService: IaService
-  ) { }
+  constructor(private readonly actionSheetController: ActionSheetController) { }
 
-  async mostrarOpcionesArchivo() {
+  async mostrarOpcionesArchivo(): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
       buttons: [
         {
           text: 'Fotos y videos',
-          icon: 'assets/fontawesome/solid/image.svg',
+          icon: 'image-outline',
           handler: () => this.abrirSelectorArchivo('image/*,video/*'),
         },
         {
           text: 'Documentos',
-          icon: 'assets/fontawesome/solid/file-lines.svg',
+          icon: 'document-text-outline',
           handler: () => this.abrirSelectorArchivo('.pdf'),
         },
         {
           text: 'Cancelar',
-          icon: 'assets/fontawesome/solid/xmark.svg',
+          icon: 'close-outline',
           role: 'cancel',
         },
       ],
@@ -55,35 +48,38 @@ export class PromptComponent implements OnInit {
     await actionSheet.present();
   }
 
-  agregarArchivos(event: Event): void {
+  agregarArchivo(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const archivos = Array.from(input.files ?? []);
+    const file = input.files?.[0];
 
-    if (archivos.length > 0) {
-      const nuevosAdjuntos = archivos.map(file => ({ file, subiendo: true }));
-      this.archivosAdjuntos = [...this.archivosAdjuntos, ...nuevosAdjuntos];
-      this.emitirArchivosSeleccionados();
-      nuevosAdjuntos.forEach(adjunto => void this.subirArchivo(adjunto));
-      input.value = '';
+    if (file) {
+      const extensionIndex = file.name.lastIndexOf('.');
+      this.archivo = {
+        file,
+        nombre: file.name,
+        extension: extensionIndex >= 0 ? file.name.slice(extensionIndex + 1).toLowerCase() : '',
+        tamaño: file.size,
+        fileStoreId: '',
+      };
+      this.archivoSeleccionado.emit(this.archivo);
     }
+
+    input.value = '';
   }
 
-  async quitarArchivo(indice: number): Promise<void> {
-    const adjunto = this.archivosAdjuntos[indice];
-    if (!adjunto || adjunto.subiendo) {
+  async quitarArchivo(): Promise<void> {
+    if (!this.archivo) {
       return;
     }
 
     const actionSheet = await this.actionSheetController.create({
       header: 'Quitar archivo',
-      // message: adjunto.storeName
-      //   ? `Se eliminará ${adjunto.file.name} también del índice.`
-      //   : `Se quitará ${adjunto.file.name} de la lista.`,
       buttons: [
         {
           text: 'Eliminar archivo',
+          icon: 'trash-outline',
           role: 'destructive',
-          handler: () => void this.confirmarQuitarArchivo(adjunto),
+          handler: () => void this.confirmarQuitarArchivo(),
         },
         {
           text: 'Cancelar',
@@ -93,6 +89,16 @@ export class PromptComponent implements OnInit {
     });
 
     await actionSheet.present();
+  }
+
+  enviarConsulta(): void {
+    const consulta = this.Query.trim();
+    if (this.subiendoArchivo || this.eliminandoArchivo || !consulta) {
+      return;
+    }
+
+    this.consultaEnviada.emit(consulta);
+    this.Query = '';
   }
 
   private abrirSelectorArchivo(tipo: string): void {
@@ -101,43 +107,11 @@ export class PromptComponent implements OnInit {
     input.click();
   }
 
-  enviarConsulta(): void {
-    const consulta = this.textoConsulta.trim();
-
-    if (!consulta) {
+  private async confirmarQuitarArchivo(): Promise<void> {
+    if (!this.archivo) {
       return;
     }
 
-    this.consultaEnviada.emit(consulta);
-    this.textoConsulta = '';
+    this.archivoEliminarSolicitado.emit(this.archivo);
   }
-
-  private async subirArchivo(adjunto: ArchivoAdjunto): Promise<void> {
-    try {
-      adjunto.storeName = await this.iaService.subirArchivo(adjunto.file);
-    } catch (error) {
-      adjunto.error = error instanceof Error ? error.message : 'No se pudo subir el archivo.';
-    } finally {
-      adjunto.subiendo = false;
-    }
-  }
-
-  private async confirmarQuitarArchivo(adjunto: ArchivoAdjunto): Promise<void> {
-    try {
-      if (adjunto.storeName) {
-        await this.iaService.eliminarArchivo(adjunto.storeName);
-      }
-      this.archivosAdjuntos = this.archivosAdjuntos.filter(item => item !== adjunto);
-      this.emitirArchivosSeleccionados();
-    } catch (error) {
-      adjunto.error = error instanceof Error ? error.message : 'No se pudo eliminar el archivo.';
-    }
-  }
-
-  private emitirArchivosSeleccionados(): void {
-    this.archivosSeleccionados.emit(this.archivosAdjuntos.map(adjunto => adjunto.file));
-  }
-
-  ngOnInit() {}
-
 }
