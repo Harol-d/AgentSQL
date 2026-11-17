@@ -8,7 +8,7 @@ import { ApiResponse } from '../models/apiResponse';
 })
 export class IaService {
   private readonly http = inject(HttpClient);
-  private readonly backend = 'https://agent-sql.vercel.app/';
+  private readonly backend = 'https://agent-sql.vercel.app';
 
   enviarPrompt(query: string): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(
