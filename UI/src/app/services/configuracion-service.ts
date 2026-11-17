@@ -9,7 +9,7 @@ import { LlmSettings } from '../models/llm-settings';
 })
 export class ConfiguracionService {
   private readonly http = inject(HttpClient);
-  private readonly backend = 'https://agent-sql.vercel.app/;
+  private readonly backend = 'https://agent-sql.vercel.app';
 
   getSettings(): Observable<LlmSettings> {
     return this.http.get<LlmSettings>(`${this.backend}/settings`);
