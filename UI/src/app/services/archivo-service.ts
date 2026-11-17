@@ -9,7 +9,7 @@ import { Archivo } from '../models/archivo';
 })
 export class ArchivoService {
   private readonly http = inject(HttpClient);
-  private readonly backend = 'https://agent-sql.vercel.app/';
+  private readonly backend = 'https://agent-sql.vercel.app';
 
   subirArchivo(archivo: Archivo): Observable<ApiResponse> {
     const formData = new FormData();
